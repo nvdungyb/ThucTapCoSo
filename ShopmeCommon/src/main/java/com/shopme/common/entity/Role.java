@@ -13,73 +13,77 @@ import jakarta.persistence.Table;
 @Table(name = "roles")
 public class Role {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Column(length = 40, nullable = false, unique = true)
-	private String name;
+    @Column(length = 40, nullable = false, unique = true)
+    private String name;
 
-	@Column(length = 150, nullable = false)
-	private String description;
+    @Column(length = 150, nullable = false)
+    private String description;
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Role() {
-	}
+    public Role() {
+    }
 
-	public Role(String name) {
-		super();
-		this.name = name;
-	}
+    public Role(String name) {
+        super();
+        this.name = name;
+    }
 
-	public Role(Integer id) {
-		this.id = id;
-	}
+    public Role(Integer id) {
+        this.id = id;
+    }
 
-	public Role(String name, String description) {
-		super();
-		this.name = name;
-		this.description = description;
-	}
+    public Role(String name, String description) {
+        super();
+        this.name = name;
+        this.description = description;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Role other = (Role) obj;
-		return Objects.equals(id, other.id);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Role other = (Role) obj;
+        return Objects.equals(id, other.id);
+    }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
