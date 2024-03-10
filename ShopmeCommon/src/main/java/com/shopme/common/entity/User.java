@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 public class User {
+    //    Đối tượng được set Id khi lưu vào database, CrudRepository sẽ tự động tạo một giá trị id cho đối tượng do annotation dưới.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
