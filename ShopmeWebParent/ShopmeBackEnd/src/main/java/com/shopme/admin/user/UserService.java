@@ -3,7 +3,6 @@ package com.shopme.admin.user;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +18,8 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepo;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     public List<User> listAll() {
         return (List<User>) userRepo.findAll();
@@ -30,24 +29,24 @@ public class UserService {
         return (List<Role>) roleRepo.findAll();
     }
 
-    private void encodePassword(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-    }
+//    private void encodePassword(User user) {
+//        String encodedPassword = passwordEncoder.encode(user.getPassword());
+//        user.setPassword(encodedPassword);
+//    }
 
-    public void save(User user) {
+    public User save(User user) {
         boolean isUpdatingUser = (user.getId() != null);
         if (isUpdatingUser) {
             User exitingUser = userRepo.findById(user.getId()).get();
             if (user.getPassword().isEmpty()) {
                 user.setPassword(exitingUser.getPassword());
             } else {
-                encodePassword(user);
+//                encodePassword(user);
             }
         } else {
-            encodePassword(user);
+//            encodePassword(user);
         }
-        userRepo.save(user);
+        return userRepo.save(user);
     }
 
     public boolean isEmailUnique(Integer id, String email) {
@@ -84,7 +83,7 @@ public class UserService {
         }
     }
 
-    public void updateUserEnabledStatus(Integer id, boolean enabled){
+    public void updateUserEnabledStatus(Integer id, boolean enabled) {
         userRepo.updateEnabledStatus(id, enabled);
     }
 }
