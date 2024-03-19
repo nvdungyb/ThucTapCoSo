@@ -3,15 +3,7 @@ package com.shopme.common.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -99,6 +91,10 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
+    }
+
     public String getPhotos() {
         return photos;
     }
@@ -136,5 +132,11 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (id == null || photos == null) return "/images/default_thumbnail.png";
+        return "/user-photos/" + this.id + "/" + this.photos;
     }
 }
