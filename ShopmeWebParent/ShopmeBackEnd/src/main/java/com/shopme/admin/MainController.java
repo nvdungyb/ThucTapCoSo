@@ -19,7 +19,7 @@ public class MainController {
     @Autowired
     private UserService service;
 
-    @GetMapping("")
+    @GetMapping()
     public String viewHomePage(HttpSession session, Model model) throws UserNotFoundException {
         String userId = session.getAttribute("userId").toString();
         if (userId != null) {
