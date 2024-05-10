@@ -2,6 +2,7 @@ package com.shopme.admin.security;
 
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+@Getter
 public class ShopmeUserDetails implements UserDetails {
     private User user;
 
@@ -58,5 +60,9 @@ public class ShopmeUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.isEnabled();
+    }
+
+    public String getFullname() {
+        return user.getFirstName() + " " + user.getLastName();
     }
 }
