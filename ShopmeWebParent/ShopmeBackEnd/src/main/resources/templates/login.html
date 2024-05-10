@@ -22,7 +22,7 @@
 
     <p class="text-danger" th:text="${error != null ? error : ''}"> </p>
 
-    <form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto">
+    <form th:action="@{/authentication/login}" method="post" style="max-width: 350px; margin: 0 auto">
 
         <div th:if="${param.error}">
             <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
@@ -42,8 +42,7 @@
         </div>
     </form>
 
-    <div>
-        <p>Shopme Control Panel - Copyright @copy; Shopme </p>
+    <div th:replace="fragment :: footer">
     </div>
 </div>
 </body>
