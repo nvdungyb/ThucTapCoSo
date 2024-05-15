@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
-      xmlns:th="http://wwwthymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 
 <div th:fragment="menu">
+<!--    <form th:action="@{/logout}" method="post" th:hidden="true" name="LogoutForm">-->
+<!--        <input type="submit"/>-->
+<!--    </form>-->
+
+
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <a class="navbar-brand" th:href="@{/}">
             <img th:src="@{/images/logo.png}" style="width:50px; height:50px"/>
@@ -87,7 +93,7 @@
                        sec:authentication="principal.fullname">Default name</a>
 
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                        <a class="dropdown-item" id="LogoutLink" th:href="@{/process_logout}">Logout</a>
                     </div>
                 </li>
 
@@ -98,5 +104,15 @@
 
 </div>
 
+<!--<script type="text/javascript">-->
+<!--    $(document).ready(function(){-->
+<!--        $("#LogoutLink").on("click", function(e){-->
+<!--            e.preventDefault();-->
+<!--            document.LogoutForm.submit();-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 </body>
 </html>
+
+<!-- Lí do không sử dụng được logout bằng gửi form ẩn là do js trên không thực hiện submit form ẩn-->

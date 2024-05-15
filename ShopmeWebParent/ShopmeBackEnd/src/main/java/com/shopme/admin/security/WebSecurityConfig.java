@@ -45,7 +45,13 @@ public class WebSecurityConfig {
                         .defaultSuccessUrl("/")
                         .loginProcessingUrl("/authentication/login")
                         .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/process_logout")           // Vì csrf đã disable nên bất kì http request nào cũng được cho phép, mặc định csrf được kích hoạt thì logout url sẽ là POST method và được khyến khích sử dụng POST để tránh csrf attack.
+                        .logoutSuccessUrl("/login")
+                        .permitAll()
                 );
+
         return http.build();
     }
 
