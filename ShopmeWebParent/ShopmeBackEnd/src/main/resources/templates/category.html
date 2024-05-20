@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment :: page_head('Category - Shopme Admin')"/>
+
+<body class="container-fluid">
+<div th:replace="navigation :: menu">
+</div>
+
+<div>
+    <h2>Manage Categories</h2>
+    <a th:href="@{/categories/new}">Create New Category</a>
+</div>
+
+<div th:if="${message != null}" class="alert alert-success text-center">
+    [[${message}]]
+</div>
+
+<div>
+    <table class="table table-bordered table-striped table-hover table-responsive-xl">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Category Image</th>
+            <th>Category Name</th>
+            <th>Alias</th>
+            <th>Enabled</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="category : ${listCategories}">
+            <td>[[${category.id}]]</td>
+            <td>
+                <span th:if="${category.image == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+                <img th:if="${category.image != null}" style="width:100px"/>
+            </td>
+            <td>[[${category.name}]]</td>
+            <td>[[${category.alias}]]</td>
+            <td>
+                <a th:if="${category.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
+                   th:href="@{'/categories/' + ${category.id} + '/enabled/false'}" title="Disable this user"></a>
+                <a th:if="${category.enabled == false}" class="fas fa-circle fa-2x icon-dark"
+                   th:href="@{'/categories/' + ${category.id} + '/enabled/true'}" title="Enable this user"></a>
+            </td>
+            <td>
+                <a class="fas fa-edit fa-2x icon-green" th:href="@{'/categories/edit/' + ${category.id}}" title="Edit this user">
+                </a>
+                &nbsp;
+                <a class="fas fa-trash fa-2x icon-dark link-delete" th:href="@{'/categories/delete/' + ${category.id}}"
+                   th:userId="${category.id}"
+                   title="Delete this user"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="text-center m-1" th:if="${totalItems > 0}">
+    <span>Showing category # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+</div>
+<div class="text-center m-1" th:unless="${totalItems > 0}">
+    <span>No category found</span>
+</div>
+
+<div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/1'}">First</a>
+            </li>
+            <li th:class="${currentPage > 1 ?  'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${currentPage - 1}}">Previous</a>
+            </li>
+
+            <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+                th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${i}}">[[${i}]]</a>
+            </li>
+            <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${currentPage + 1}}">Next</a>
+            </li>
+            <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${totalPages}}">Last</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Confirmation</h4>
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+
+            <div class="modal-body">
+                <span id="confirmText"></span>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" href="" id="yesButton">YES</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragment :: footer">
+</div>
+
+
+</body>
+
+</html>
