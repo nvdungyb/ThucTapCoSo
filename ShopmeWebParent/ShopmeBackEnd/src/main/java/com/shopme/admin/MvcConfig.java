@@ -6,18 +6,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String dirName = "user-photos";
-        Path userPhotosDir = Paths.get(dirName);
+        String listDirName = "user-photos, uploads-categories";
+        List<String> dirNames = Arrays.asList(listDirName.split(", "));
 
-        String userPhotosPath = userPhotosDir.toFile().getAbsolutePath();
-
-        registry.addResourceHandler("/" + dirName + "/**").addResourceLocations("file:/" + userPhotosPath + "/");
-
+        for(String dirName : dirNames) {
+            Path userPhotosDir = Paths.get(dirName);
+            String userPhotosPath = userPhotosDir.toFile().getAbsolutePath();
+            registry.addResourceHandler("/" + dirName + "/**").addResourceLocations("file:/" + userPhotosPath + "/");
+        }
     }
 }
