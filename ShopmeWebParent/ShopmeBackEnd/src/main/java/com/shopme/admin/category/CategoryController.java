@@ -4,6 +4,7 @@ import com.shopme.admin.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -24,12 +25,12 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public String firstPage(Model model) {
-        return listByPage(1, model);
+        return listByPage(1, null, model);
     }
 
     @GetMapping("/categories/page/{pageNum}")
-    public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model) {
-        Page<Category> listCategoriesPage = categoryService.listByPage(pageNum);
+    public String listByPage(@PathVariable(name = "pageNum") int pageNum, @RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        Page<Category> listCategoriesPage = categoryService.listByPage(pageNum, keyword);
         List<Category> listCategories = listCategoriesPage.getContent();
 
         long startCount = (pageNum - 1) * CategoryService.CATEGORIES_PER_PAGE + 1;
@@ -41,7 +42,7 @@ public class CategoryController {
 
         model.addAttribute("totalPages", listCategoriesPage.getTotalPages());
         model.addAttribute("currentPage", pageNum);
-        model.addAttribute("totalItems", listCategories.size());
+        model.addAttribute("totalItems", listCategoriesPage.getTotalElements());
         model.addAttribute("startCount", startCount);
         model.addAttribute("endCount", endCount);
         model.addAttribute("listCategories", listCategories);
@@ -74,15 +75,46 @@ public class CategoryController {
 
     @PostMapping("/categories/save")
     public String saveCategory(Category category, @RequestParam("fileImage") MultipartFile fileImage, RedirectAttributes redirectAttributes) throws IOException {
-        String fileName = StringUtils.cleanPath(fileImage.getOriginalFilename());
-        category.setImage(fileName);
+        if (!fileImage.isEmpty()) {
+            String fileName = StringUtils.cleanPath(fileImage.getOriginalFilename());
+            category.setImage(fileName);
 
-        Category savedCategory = categoryService.saveCategory(category);
+            Category savedCategory = categoryService.saveCategory(category);
+            String uploadDir = "uploads-categories/" + savedCategory.getId();
 
-        String uploadDir = "images/category-images/" + savedCategory.getId();
-        FileUploadUtil.saveFile(uploadDir, fileName, fileImage);
+            FileUploadUtil.cleanDir(uploadDir);
+            FileUploadUtil.saveFile(uploadDir, fileName, fileImage);
+        } else {
+            categoryService.saveCategory(category);
+        }
 
         redirectAttributes.addFlashAttribute("message", "The category has been saved successfully.");
+        return "redirect:/categories";
+    }
+
+    @GetMapping("/categories/edit/{id}")
+    public String editCategoriy(@PathVariable(name = "id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Category category = categoryService.get(id);
+        List<Category> listCategories = categoryService.listCategoriesUsedInForm();
+
+        model.addAttribute("category", category);
+        model.addAttribute("listCategories", listCategories);
+        model.addAttribute("pageTitle", "Edit Category (ID: " + id + ")");
+
+        return "category_form";
+    }
+
+    @GetMapping("/categories/delete/{id}")
+    public String deleteCategory(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.delete(id);
+            String categoryDir = "uploads-categories/" + id;
+            FileUploadUtil.removeDir(categoryDir);
+            redirectAttributes.addFlashAttribute("message", "The category ID " + id + " has been deleted successfully");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+
         return "redirect:/categories";
     }
 

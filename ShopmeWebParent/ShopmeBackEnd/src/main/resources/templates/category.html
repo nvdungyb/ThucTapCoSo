@@ -17,6 +17,21 @@
 </div>
 
 <div>
+    <div>
+        <form th:action="@{/categories/page/1}" class="form-inline m-3">
+            <label class="mr-2">Search:</label>
+            <input type="search" name="keyword" th:value="${keyword}" class="form-control"/>
+            &nbsp; &nbsp;
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+            &nbsp; &nbsp;
+            <button type="button" class="btn btn-secondary" onclick="clearFilter()">
+                <i class="fas fa-eraser"></i>
+            </button>
+        </form>
+    </div>
+
     <table class="table table-bordered table-striped table-hover table-responsive-xl">
         <thead class="thead-dark">
         <tr>
@@ -34,7 +49,7 @@
             <td>[[${category.id}]]</td>
             <td>
                 <span th:if="${category.image == null}" class="fas fa-portrait fa-3x icon-silver"></span>
-                <img th:if="${category.image != null}" style="width:100px"/>
+                <img th:if="${category.image != null}" th:src="@{${category.imagePath}}" style="width:100px"/>
             </td>
             <td>[[${category.name}]]</td>
             <td>[[${category.alias}]]</td>
@@ -45,12 +60,16 @@
                    th:href="@{'/categories/' + ${category.id} + '/enabled/true'}" title="Enable this user"></a>
             </td>
             <td>
-                <a class="fas fa-edit fa-2x icon-green" th:href="@{'/categories/edit/' + ${category.id}}" title="Edit this user">
+                <a class="fas fa-edit fa-2x icon-green" th:href="@{'/categories/edit/' + ${category.id}}"
+                   title="Edit this user">
                 </a>
                 &nbsp;
-                <a class="fas fa-trash fa-2x icon-dark link-delete" th:href="@{'/categories/delete/' + ${category.id}}"
-                   th:userId="${category.id}"
-                   title="Delete this user"></a>
+                <a th:if="${category.children.isEmpty()}" class="fas fa-trash fa-2x icon-green link-delete"
+                   th:href="@{'/categories/delete/' + ${category.id}}" th:caId="${category.id}"
+                   title="Delete this category"></a>
+
+                <a th:if="${!category.children.isEmpty()}" class="fas fa-trash fa-2x icon-dark link-delete"
+                   title="Can not delete this category!"></a>
             </td>
         </tr>
         </tbody>
@@ -110,6 +129,26 @@
 <div th:replace="fragment :: footer">
 </div>
 
+<script>
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            link = $(this);
+            caId = link.attr("caId");
+            $("#yesButton").attr("href", link.attr("href"));
+            if (caId !== null && caId !== undefined) {
+                $("#confirmText").text("Are you sure you want to delete this Category ID " + caId + "?");
+                $("#confirmModal").modal();
+            }
+        });
+    });
+
+    function clearFilter() {
+        var keywordInput = document.querySelector('input[name="keyword"]');
+        keywordInput.value = '';
+    }
+
+</script>
 
 </body>
 

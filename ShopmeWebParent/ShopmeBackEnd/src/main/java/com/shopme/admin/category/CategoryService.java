@@ -22,9 +22,13 @@ public class CategoryService {
         return (List<Category>) categoryRepo.findAll();
     }
 
-    public Page<Category> listByPage(int pageNum) {
+    public Page<Category> listByPage(int pageNum, String keyword) {
         Pageable pageable = PageRequest.of(pageNum - 1, CATEGORIES_PER_PAGE);
-        return categoryRepo.findAll(pageable);
+        if (keyword != null && !keyword.isEmpty()) {
+            return categoryRepo.searchKeyword(keyword, pageable);
+        } else {
+            return categoryRepo.findAll(pageable);
+        }
     }
 
     public void updateCategoryEnabledStatus(Integer id, boolean enabled) {
@@ -37,5 +41,23 @@ public class CategoryService {
 
     public Category saveCategory(Category category) {
         return categoryRepo.save(category);
+    }
+
+    public Category get(Integer id) {
+        return categoryRepo.getById(id);
+    }
+
+    public void delete(Integer id) {
+        categoryRepo.deleteById(id);
+    }
+
+    public boolean isUnique(String name, String alias) {
+        Category categoryByName = categoryRepo.findByName(name);
+        Category categoryByAlias = categoryRepo.findByAlias(alias);
+        if (categoryByName != null || categoryByAlias != null) {
+            return false;
+        }
+
+        return true;
     }
 }
