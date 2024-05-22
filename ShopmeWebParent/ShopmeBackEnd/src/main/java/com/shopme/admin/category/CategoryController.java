@@ -4,7 +4,6 @@ import com.shopme.admin.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -47,7 +46,7 @@ public class CategoryController {
         model.addAttribute("endCount", endCount);
         model.addAttribute("listCategories", listCategories);
 
-        return "category";
+        return "categories/category";
     }
 
     @GetMapping("/categories/{id}/enabled/{status}")
@@ -70,7 +69,7 @@ public class CategoryController {
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("listCategories", listCategories);
 
-        return "category_form";
+        return "categories/category_form";
     }
 
     @PostMapping("/categories/save")
@@ -101,7 +100,7 @@ public class CategoryController {
         model.addAttribute("listCategories", listCategories);
         model.addAttribute("pageTitle", "Edit Category (ID: " + id + ")");
 
-        return "category_form";
+        return "categories/category_form";
     }
 
     @GetMapping("/categories/delete/{id}")
