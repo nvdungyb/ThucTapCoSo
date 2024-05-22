@@ -33,7 +33,6 @@ public class Category {
     public Category(String name) {
         this.name = name;
         this.alias = name;
-        this.image = "default.png";
     }
 
     public Category(Integer id) {
@@ -103,6 +102,13 @@ public class Category {
 
     public void setChildren(Set<Category> children) {
         this.children = children;
+    }
+
+    @Transient
+    public String getImagePath() {
+        if (id == null || image.equals("default.png"))
+            return "/images/default_thumbnail.png";
+        return "/uploads-categories/" + this.id + "/" + this.image;
     }
 
 }
