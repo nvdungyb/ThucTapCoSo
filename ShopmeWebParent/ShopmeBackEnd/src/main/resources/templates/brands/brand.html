@@ -45,13 +45,17 @@
 
         <tbody>
         <tr th:each="brand : ${listBrands}">
-            <td>[[${category.id}]]</td>
+            <td>[[${brand.id}]]</td>
             <td>
-                <span th:if="${brand.image == null}" class="fas fa-portrait fa-3x icon-silver"></span>
-                <img th:if="${brand.image != null}" th:src="@{${brand.logoPath}}" style="width:100px"/>
+                <span th:if="${brand.logo == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+                <img th:if="${brand.logo != null}" th:src="@{${brand.logoPath}}" style="width:100px"/>
             </td>
             <td>[[${brand.name}]]</td>
-            <td>[[${brand.categories}]]</td>
+            <td>
+                <th:block th:each="category : ${brand.categories}">
+                    <span class="badge bage-secondry" th:text="${category.name}"></span>
+                </th:block>
+            </td>
 
             <td>
                 <a class="fas fa-edit fa-2x icon-green" th:href="@{'/brands/edit/' + ${brand.id}}"
@@ -79,21 +83,21 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}">
-                <a class="page-link" th:href="@{'/brand/page/1'}">First</a>
+                <a class="page-link" th:href="@{'/brands/page/1'}">First</a>
             </li>
             <li th:class="${currentPage > 1 ?  'page-item' : 'page-item disabled'}">
-                <a class="page-link" th:href="@{'/brand/page/' + ${currentPage - 1}}">Previous</a>
+                <a class="page-link" th:href="@{'/brands/page/' + ${currentPage - 1}}">Previous</a>
             </li>
 
             <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
                 th:each="i : ${#numbers.sequence(1, totalPages)}">
-                <a class="page-link" th:href="@{'/brand/page/' + ${i}}">[[${i}]]</a>
+                <a class="page-link" th:href="@{'/brands/page/' + ${i}}">[[${i}]]</a>
             </li>
             <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
-                <a class="page-link" th:href="@{'/brand/page/' + ${currentPage + 1}}">Next</a>
+                <a class="page-link" th:href="@{'/brands/page/' + ${currentPage + 1}}">Next</a>
             </li>
             <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
-                <a class="page-link" th:href="@{'/brand/page/' + ${totalPages}}">Last</a>
+                <a class="page-link" th:href="@{'/brands/page/' + ${totalPages}}">Last</a>
             </li>
         </ul>
     </nav>
