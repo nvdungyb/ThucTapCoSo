@@ -13,7 +13,7 @@ import java.util.List;
 public class MvcConfig implements WebMvcConfigurer {
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String listDirName = "user-photos, uploads-categories";
+        String listDirName = "uploads/user-photos, uploads/categories-images";
         List<String> dirNames = Arrays.asList(listDirName.split(", "));
 
         for(String dirName : dirNames) {
