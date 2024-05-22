@@ -108,7 +108,7 @@ public class Category {
     public String getImagePath() {
         if (id == null || image.equals("default.png"))
             return "/images/default_thumbnail.png";
-        return "/uploads-categories/" + this.id + "/" + this.image;
+        return "/uploads/categories-images/" + this.id + "/" + this.image;
     }
 
 }

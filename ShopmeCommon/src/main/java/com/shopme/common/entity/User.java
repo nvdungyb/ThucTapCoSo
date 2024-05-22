@@ -138,6 +138,6 @@ public class User {
     @Transient
     public String getPhotosImagePath() {
         if (id == null || photos == null) return "/images/default_thumbnail.png";
-        return "/user-photos/" + this.id + "/" + this.photos;
+        return "/uploads/user-photos/" + this.id + "/" + this.photos;
     }
 }
