@@ -8,6 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BrandRepository extends CrudRepository<Brand, Integer>, PagingAndSortingRepository<Brand, Integer> {
 
@@ -15,4 +17,8 @@ public interface BrandRepository extends CrudRepository<Brand, Integer>, PagingA
     Page<Brand> findAll(String keyword, Pageable pageable);
 
     Brand findByName(String name);
+
+    // Projection in Spring JPA. This is a way to select only the fields that we need from the database.
+    @Query("SELECT NEW Brand(b.id, b.name) FROM Brand b ORDER BY b.name ASC")
+    List<Brand> findAll();
 }

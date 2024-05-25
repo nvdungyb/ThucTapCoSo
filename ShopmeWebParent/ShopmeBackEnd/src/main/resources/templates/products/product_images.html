@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment :: page_head('Brand - Shopme Admin')">
+    <link rel="stylesheet" th:href="@{/richtext/jquery.richtext.min.js}">
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+</head>
+
+<body>
+<div th:fragment="content" th:remove="tag">
+    <div class="row">
+        <div class="col border m-3 p-2">
+            <div>
+                <label>Images</label>
+            </div>
+            <div class="m-2" style="max-width: 450px">
+                <input type="hidden" th:field="*{mainImage}" />
+                <img id="thumbnail" alt="Main image preview" class="img-fluid" th:src="@{${product.mainImagePath}}"/>
+            </div>
+            <div>
+                <input type="file" id="fileImage" name="fileImage" accept="image/png, image/jpeg"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
