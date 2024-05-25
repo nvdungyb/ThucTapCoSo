@@ -1,6 +1,5 @@
 package com.shopme.admin.category;
 
-import com.shopme.admin.CategoryRepository;
 import com.shopme.common.entity.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -26,7 +24,7 @@ public class CategoryRepositoryTests {
 
     @Test
     public void testCreateRootCategory() {
-        Category category = new Category("Laptop");
+        Category category = new Category("Computers");
         Category savedCategory = repo.save(category);
 
         assertThat(savedCategory.getId()).isGreaterThan(0);
@@ -34,12 +32,21 @@ public class CategoryRepositoryTests {
 
     @Test
     public void testCreateSubCategory() {
-        Category parent = new Category(2);
-        Category oppoF11 = new Category("Laptop-Gamming", parent);
-        Category oppoA35 = new Category("Laptop-Asus", parent);
+        Category parent = new Category(22);
+        Category memory = new Category("Memory", parent);
 
-        repo.saveAll(List.of(oppoF11, oppoA35));
+        repo.save(memory);
+        assertThat(memory.getId()).isGreaterThan(0);
+    }
 
+    @Test
+    public void setParentCategory() {
+        Category parent = new Category(21);
+        Category child = repo.findById(2).get();
+        child.setParent(parent);
+
+        repo.save(child);
+        assertThat(child.getParent().getId()).isEqualTo(parent.getId());
     }
 
     @Test

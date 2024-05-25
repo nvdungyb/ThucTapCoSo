@@ -73,4 +73,5 @@ public class Product {
         if (this.id == null || this.mainImage == null) return "/images/default_thumbnail.png";
         return "/uploads/product-images/" + this.id + "/" + this.mainImage;
     }
+
 }
