@@ -34,6 +34,7 @@ public class WebSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests(request -> request
+                        .requestMatchers("/cart").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(login -> login

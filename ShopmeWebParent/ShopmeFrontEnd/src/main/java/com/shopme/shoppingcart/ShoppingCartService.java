@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ShoppingCartService {
@@ -30,5 +32,17 @@ public class ShoppingCartService {
         cartRepository.save(cartItem);
 
         return updatedQuantity;
+    }
+
+    public List<CartItem> listCartItems(Customer customer) {
+        return cartRepository.findByCustomer(customer);
+    }
+
+    public void delete(Integer itemId) {
+        cartRepository.deleteById(itemId);
+    }
+
+    public void updateItem(Integer itemId, Integer quantity) {
+        cartRepository.updateQuantity(itemId, quantity);
     }
 }
