@@ -19,4 +19,9 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
     private int quantity;
+
+    @Transient
+    public float getSubtotal() {
+        return product.getPrice() * quantity;
+    }
 }
