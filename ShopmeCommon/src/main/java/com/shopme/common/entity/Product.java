@@ -2,6 +2,7 @@ package com.shopme.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "products")
+@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,6 +74,10 @@ public class Product {
     public String getMainImagePath() {
         if (this.id == null || this.mainImage == null) return "/images/default_thumbnail.png";
         return "/uploads/product-images/" + this.id + "/" + this.mainImage;
+    }
+
+    public Product(int id) {
+        this.id = id;
     }
 
 }

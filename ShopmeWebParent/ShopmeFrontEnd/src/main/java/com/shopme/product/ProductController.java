@@ -54,5 +54,18 @@ public class ProductController {
         return "products_by_category";
     }
 
+    @GetMapping("/p/{product_alias}")
+    public String viewProductDetail(@PathVariable("product_alias") String alias, Model model) {
+        try {
+            Product product = productService.getProduct(alias);
+            List<Category> listCategoryParents = categoryService.listCategoryParents(product.getCategory());
 
+            model.addAttribute("product", product);
+            model.addAttribute("listCategoryParents", listCategoryParents);
+            model.addAttribute("pageTitle", product.getName());
+            return "product/product_detail";
+        } catch (Exception e) {
+        }
+        return "index";
+    }
 }

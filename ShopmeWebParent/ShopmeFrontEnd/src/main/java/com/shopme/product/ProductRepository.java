@@ -12,5 +12,6 @@ public interface ProductRepository extends CrudRepository<Product, Integer>, Pag
     @Query("SELECT p FROM Product p WHERE p.enabled = true AND p.category.id = ?1")
     public Page<Product> listByCategory(Integer categoryId, String categoryIdMatch, Pageable pageable);
 
+    public Product findByAlias(String alias);
 }
 //    OR p.category.parent.name LIKE %?2%"

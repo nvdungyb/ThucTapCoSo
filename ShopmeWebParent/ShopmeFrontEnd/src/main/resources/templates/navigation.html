@@ -22,12 +22,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="">Payments</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Register</a>
-                </li>
+
+                <th:block sec:authorize="isAuthenticated()">
+                    <li class="nav-item ml-5">
+                        <a class="nav-link">Welcome back </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" sec:authentication="principal.fullname"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Shopme/process_logout">Logout</a>
+                    </li>
+                </th:block>
+
+                <th:block sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/Shopme/login">Login</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Shopme/register">Register</a>
+                    </li>
+                </th:block>
             </ul>
         </div>
     </nav>
@@ -37,4 +50,3 @@
 </body>
 </html>
 
-<!-- Lí do không sử dụng được logout bằng gửi form ẩn là do js trên không thực hiện submit form ẩn-->

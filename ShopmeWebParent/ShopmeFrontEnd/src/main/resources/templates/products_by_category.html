@@ -35,9 +35,11 @@
         <th:block th:each="product : ${listProducts}">
             <div class="col">
                 <div>
-                    <img th:src="@{${product.mainImagePath}}" width="150px">
-                    <br/>
-                    <b>[[${product.name}]]</b>
+                    <a th:href="@{'/p/' + ${product.alias}}">
+                        <img th:src="@{${product.mainImagePath}}" width="150px">
+                        <br/>
+                        <b>[[${product.name}]]</b>
+                    </a>
                 </div>
             </div>
         </th:block>

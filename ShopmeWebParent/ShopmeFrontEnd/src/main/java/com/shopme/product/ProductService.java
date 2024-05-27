@@ -21,4 +21,10 @@ public class ProductService {
         return productRepository.listByCategory(categoryId, categoryIdMatch, pageable);
     }
 
+    public Product getProduct(String alias) throws Exception {
+        if (alias == null || alias.isEmpty())
+            throw new Exception("Alias cannot be null or empty");
+
+        return productRepository.findByAlias(alias);
+    }
 }
