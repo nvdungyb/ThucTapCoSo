@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head(${pageTitle})"/>
+<meta charset="ISO-8859-1">
+<title>Welcome to Shopme</title>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: header_menu"></div>
+    <div class="text-center">
+        <h2>Your shopping cart</h2>
+    </div>
+
+    <div class="row m-1">
+        <div class="col-sm-8">
+            <th:block th:each="item, status : ${cartItems}">
+                <div class="row border rounded">
+                    <div class="col-1">
+                        <div>[[${status.count}]]</div>
+                        <div>
+                            <a class="fas fa-trash" th:href="@{/carts/delete/{id}(id=${item.id})}"></a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <img th:src="@{${item.product.mainImagePath}}" class="img-fluid"/>
+                    </div>
+                    <div class="col-6">
+                        <div><a th:href="@{'/p/' + ${item.product.alias}}"
+                                target="_blank"><b>[[${item.product.name}]]</b></a>
+                        </div>
+                        <!--                        <div class="mt-1"><b>Số lượng : </b>[[${item.quantity}]]</div>-->
+                        <div class="mt-1"><b>Số lượng: </b>
+                            <form th:action="@{/cart/update}" method="post" class="form-inline">
+                                <input type="hidden" name="id" th:value="${item.id}"/>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            onclick="decrementQuantity(this)">-
+                                    </button>
+                                    <input type="number" name="quantity" th:value="${item.quantity}"
+                                           class="form-control text-center" min="1" style="width: 60px"/>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            onclick="incrementQuantity(this)">+
+                                    </button>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary ml-4" disabled>Update</button>
+                            </form>
+                        </div>
+
+                        <div>
+                            <span>X</span>
+                            &nbsp;
+                            <span class="price"
+                                  th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                        </div>
+                        <div>
+                            <span class="h5 subtotal" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} +
+                            ' VND'"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </th:block>
+            <div class="row m-1"> &nbsp;</div>
+        </div>
+
+        <div class="col-sm-4" th:unless="${#lists.isEmpty(cartItems)}">
+            <div>
+                <span class="h3">Estimated Total</span>
+            </div>
+            <div class="mt-2">
+                <span class="h4 estimated-total"
+                      th:text="${#numbers.formatDecimal(estimatedTotal, 0, 'COMMA',0 , 'POINT')} + ' VND'"></span>
+            </div>
+            <div class="mt-2">
+                <a class="btn btn-primary btn-danger p-3" th:href="@{/checkout}">Checkout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-1 justify-content-center" th:if="${#lists.isEmpty(cartItems)}">
+        <h3>You have not chosen any products yet.</h3>
+    </div>
+
+
+    <div th:replace="fragment :: footer_menu"/>
+</div>
+
+<script>
+    function incrementQuantity(button) {
+        var input = button.parentElement.querySelector('input[name="quantity"]');
+        input.value = parseInt(input.value) + 1;
+        enableUpdateButton(input);
+    }
+
+    function decrementQuantity(button) {
+        var input = button.parentElement.querySelector('input[name="quantity"]');
+        if (input.value > 1) {
+            input.value = parseInt(input.value) - 1;
+            enableUpdateButton(input);
+        }
+    }
+
+    function enableUpdateButton(input) {
+        var form = input.closest('form');
+        var updateButton = form.querySelector('button[type="submit"]');
+        updateButton.disabled = false;
+    }
+</script>
+</body>
+</html>

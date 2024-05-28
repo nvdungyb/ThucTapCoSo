@@ -52,41 +52,41 @@
                     </li>
                 </th:block>
 
-                <th:block sec:authorize="hasAnyAuthority('Admin', 'SalesPerson')">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/shipping}"> Shipping</a>
-                    </li>
-                </th:block>
+<!--                <th:block sec:authorize="hasAnyAuthority('Admin', 'SalesPerson')">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" th:href="@{/shipping}"> Shipping</a>-->
+<!--                    </li>-->
+<!--                </th:block>-->
 
                 <th:block sec:authorize="hasAnyAuthority('Admin', 'SalesPerson', 'Shipper')">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/order}"> Orders</a>
+                        <a class="nav-link" th:href="@{/orders}"> Orders</a>
                     </li>
                 </th:block>
 
-                <th:block sec:authorize="hasAnyAuthority('Admin', 'SalesPerson')">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/report}"> Sales Report</a>
-                    </li>
-                </th:block>
+<!--                <th:block sec:authorize="hasAnyAuthority('Admin', 'SalesPerson')">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" th:href="@{/report}"> Sales Report</a>-->
+<!--                    </li>-->
+<!--                </th:block>-->
 
-                <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/acticles}"> Acticles</a>
-                    </li>
-                </th:block>
+<!--                <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" th:href="@{/acticles}"> Acticles</a>-->
+<!--                    </li>-->
+<!--                </th:block>-->
 
-                <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/menus}"> Menus</a>
-                    </li>
-                </th:block>
+<!--                <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" th:href="@{/menus}"> Menus</a>-->
+<!--                    </li>-->
+<!--                </th:block>-->
 
-                <li class="nav-item" sec:authorize="hasAuthority('Admin')">
-                    <a class="nav-link" th:href="@{/settings}"> Settings</a>
-                </li>
+<!--                <li class="nav-item" sec:authorize="hasAuthority('Admin')">-->
+<!--                    <a class="nav-link" th:href="@{/settings}"> Settings</a>-->
+<!--                </li>-->
                 <li>
-                    <span class="fa fa-user fa-2x icon-silver"></span>
+                    <span class="fa fa-user fa-2x icon-silver ml-5"></span>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown"

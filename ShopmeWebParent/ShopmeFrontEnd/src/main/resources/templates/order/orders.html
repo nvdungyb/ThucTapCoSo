@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment :: page_head(${pageTitle})"/>
+<meta charset="ISO-8859-1">
+<title>Welcome to Shopme</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: header_menu"></div>
+    <div class="text-center my-4">
+        <h2>Your Order Details</h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Order Time</th>
+                <th>Product Cost (VND)</th>
+                <th>Shipping Cost (VND)</th>
+                <th>Total (VND)</th>
+                <th>Shipping Address</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="order, status : ${listOrders}">
+                <tr>
+                    <td th:text="${status.count}"></td>
+                    <td th:text="${order.orderTime}"></td>
+                    <td th:text="${#numbers.formatDecimal(order.productCost, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                    <td th:text="${#numbers.formatDecimal(order.shippingCost, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                    <td th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                    <td th:text="${order.shippingAddress}"></td>
+                    <td th:text="${order.orderStatus}"></td>
+                    <td>
+                        <a class="btn btn-success" th:href="@{/orders/details/{id}(id=order.id)}">Details</a>
+                    </td>
+                </tr>
+            </th:block>
+            <tr th:if="${#lists.isEmpty(listOrders)}">
+                <td colspan="8" class="text-center">
+                    <h3>You have not chosen any orders yet.</h3>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="fragment :: footer_menu"></div>
+</body>
+</html>
