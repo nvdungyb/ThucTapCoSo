@@ -12,6 +12,21 @@
     <a th:href="@{/users/new}">Create New User</a>
 </div>
 
+<div>
+    <form th:action="@{/users/page/1}" class="form-inline m-3">
+        <label class="mr-2">Search:</label>
+        <input type="search" name="keyword" th:value="${keyword}" class="form-control"/>
+        &nbsp; &nbsp;
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+        </button>
+        &nbsp; &nbsp;
+        <button type="button" class="btn btn-secondary" onclick="clearFilter()">
+            <i class="fas fa-eraser"></i>
+        </button>
+    </form>
+</div>
+
 <div th:if="${message != null}" class="alert alert-success text-center">
     [[${message}]]
 </div>

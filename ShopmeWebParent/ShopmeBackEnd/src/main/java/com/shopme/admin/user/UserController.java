@@ -26,7 +26,27 @@ public class UserController {
     // Khi người dùng truy cập vào đường dẫn /users
     @GetMapping("/users")
     public String listFirstPage(Model model) {
-        return listByPage(1, model);
+        return listByPage(1, null, model);
+    }
+
+    @GetMapping("/users/page/{pageNum}")
+    public String listByPage(@PathVariable(name = "pageNum") int pageNum, @RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        Page<User> page = service.listByPage(pageNum, keyword);
+        List<User> listUsers = page.getContent();
+
+        long startCount = (pageNum - 1) * UserService.USERS_PER_PAGE + 1;
+        long endCount = startCount + UserService.USERS_PER_PAGE - 1;
+        if (endCount > page.getTotalElements()) {
+            endCount = page.getTotalElements();
+        }
+
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("startCount", startCount);
+        model.addAttribute("endCount", endCount);
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("listUsers", listUsers);
+        return "users/user";
     }
 
     @GetMapping("/users/new")
@@ -99,26 +119,6 @@ public class UserController {
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/users";
-    }
-
-    @GetMapping("/users/page/{pageNum}")
-    public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model) {
-        Page<User> page = service.listByPage(pageNum);
-        List<User> listUsers = page.getContent();
-
-        long startCount = (pageNum - 1) * UserService.USERS_PER_PAGE + 1;
-        long endCount = startCount + UserService.USERS_PER_PAGE - 1;
-        if (endCount > page.getTotalElements()) {
-            endCount = page.getTotalElements();
-        }
-
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("currentPage", pageNum);
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-        model.addAttribute("totalItems", page.getTotalElements());
-        model.addAttribute("listUsers", listUsers);
-        return "users/user";
     }
 }
 
