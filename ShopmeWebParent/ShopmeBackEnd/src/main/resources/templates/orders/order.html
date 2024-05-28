@@ -8,7 +8,7 @@
 </div>
 
 <div>
-    <h2>Manage Customer</h2>
+    <h2>Manage Order</h2>
 </div>
 
 <div th:if="${message != null}" class="alert alert-success text-center">
@@ -41,17 +41,18 @@
             <th>Shipping cost</th>
             <th>Total</th>
             <th>Shipping address</th>
-            <th>Enabled</th>
+            <th>Status order</th>
         </tr>
         </thead>
 
         <tbody>
         <tr th:each="order : ${listOrders}">
+            <td>[[${order.id}]]</td>
             <td>[[${order.customer.fullName}]]</td>
             <td>[[${order.orderTime}]]</td>
-            <td>[[${order.productCost}]]</td>
-            <td>[[${order.shippingCost}]]</td>
-            <td>[[${order.total}]]</td>
+            <td th:text="${#numbers.formatDecimal(order.productCost, 0, 'COMMA', 0, 'POINT')}"></td>
+            <td th:text="${#numbers.formatDecimal(order.shippingCost, 0, 'COMMA', 0, 'POINT')}"></td>
+            <td th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 0, 'POINT')}"></td>
             <td>[[${order.shippingAddress}]]</td>
             <td>
                 <a th:if="${order.orderStatus == true}" class="fas fa-check-circle fa-2x icon-green"
