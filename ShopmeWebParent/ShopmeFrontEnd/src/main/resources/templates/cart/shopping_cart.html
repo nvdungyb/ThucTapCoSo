@@ -19,7 +19,7 @@
                     <div class="col-1">
                         <div>[[${status.count}]]</div>
                         <div>
-                            <a class="fas fa-trash" th:href="@{/cart/delete/{id}(id=${item.id})}"></a>
+                            <a class="fas fa-trash" th:href="@{/carts/delete/{id}(id=${item.id})}"></a>
                         </div>
                     </div>
                     <div class="col-3">
@@ -31,7 +31,7 @@
                         </div>
                         <!--                        <div class="mt-1"><b>Số lượng : </b>[[${item.quantity}]]</div>-->
                         <div class="mt-1"><b>Số lượng: </b>
-                            <form th:action="@{/cart/update}" method="post" class="form-inline">
+                            <form th:action="@{/carts/update}" method="post" class="form-inline">
                                 <input type="hidden" name="id" th:value="${item.id}"/>
                                 <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary btn-sm"
@@ -50,10 +50,12 @@
                         <div>
                             <span>X</span>
                             &nbsp;
-                            <span>[[${item.product.price}]]</span>
+                            <span class="price"
+                                  th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"></span>
                         </div>
                         <div>
-                            <span class="h5">= [[${item.subtotal}]] VND</span>
+                            <span class="h5 subtotal" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} +
+                            ' VND'"></span>
                         </div>
                     </div>
 
@@ -67,10 +69,11 @@
                 <span class="h3">Estimated Total</span>
             </div>
             <div class="mt-2">
-                <span class="h4">[[${estimatedTotal}]] VND</span>
+                <span class="h4 estimated-total"
+                      th:text="${#numbers.formatDecimal(estimatedTotal, 0, 'COMMA',0 , 'POINT')} + ' VND'"></span>
             </div>
             <div class="mt-2">
-                <a class="btn btn-primary btn-danger p-3" th:href="@{/checkout}">Checkout</a>
+                <a class="btn btn-primary btn-danger p-3" th:href="@{/carts/checkout}">Checkout</a>
             </div>
         </div>
     </div>

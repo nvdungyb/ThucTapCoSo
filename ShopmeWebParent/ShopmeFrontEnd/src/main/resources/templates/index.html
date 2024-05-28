@@ -9,15 +9,15 @@
 <div class="container-fluid">
     <div th:replace="navigation :: header_menu"></div>
     <div>
-        <h1>Shopping by Categories</h1>
+        <h1>Shopping by Products</h1>
     </div>
 
     <div class="row">
-        <div class="col" th:each="cat : ${listCategories}">
+        <div class="col" th:each="product : ${listProducts}">
             <div>
-                <img th:src="@{${cat.imagePath}}" width="120">
+                <img th:src="@{${product.mainImagePath}}" width="120">
                 <div>
-                    <a th:href="@{/c/{alias}(alias=${cat.alias})}" th:text="${cat.alias}"></a>
+                    <a th:href="@{/p/{alias}(alias=${product.alias})}" th:text="${product.name}"></a>
                 </div>
             </div>
         </div>

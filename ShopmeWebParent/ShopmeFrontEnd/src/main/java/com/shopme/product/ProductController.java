@@ -29,7 +29,7 @@ public class ProductController {
         Category category = categoryService.getCategory(alias);
 
         if (category == null) {
-            return "index";
+            return "categries";
         }
 
         List<Category> listCategoryParents = categoryService.listCategoryParents(category);
@@ -66,6 +66,6 @@ public class ProductController {
             return "product/product_detail";
         } catch (Exception e) {
         }
-        return "index";
+        return "categries";
     }
 }

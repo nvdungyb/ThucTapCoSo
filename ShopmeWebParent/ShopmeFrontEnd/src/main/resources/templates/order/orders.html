@@ -38,7 +38,7 @@
                     <td th:text="${order.shippingAddress}"></td>
                     <td th:text="${order.orderStatus}"></td>
                     <td>
-                        <a class="btn btn-success" th:href="@{/orders/details/{id}(id=order.id)}">Details</a>
+                        <a class="btn btn-success" th:href="@{/orders/details/{id}(id=${order.id})}">Details</a>
                     </td>
                 </tr>
             </th:block>

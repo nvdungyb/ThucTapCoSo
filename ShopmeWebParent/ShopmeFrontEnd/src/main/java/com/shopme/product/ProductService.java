@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
     public static final int PRODUCTS_PER_PAGE = 10;
@@ -26,5 +28,9 @@ public class ProductService {
             throw new Exception("Alias cannot be null or empty");
 
         return productRepository.findByAlias(alias);
+    }
+
+    public List<Product> findAll() {
+        return (List<Product>) productRepository.findAll();
     }
 }

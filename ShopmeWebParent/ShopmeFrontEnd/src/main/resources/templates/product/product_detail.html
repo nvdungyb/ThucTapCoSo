@@ -8,9 +8,9 @@
 <body>
 <div class="container-fluid">
     <div th:replace="navigation :: header_menu"></div>
-    <div>
-        <h1>Product in Category</h1>
-    </div>
+    <!--    <div>-->
+    <!--        <h1>Product in Category</h1>-->
+    <!--    </div>-->
 
     <div th:if="${listCategoryParents != null && !listCategoryParents.isEmpty()}">
         <div class="row">
@@ -95,6 +95,24 @@
         </div>
     </div>
 
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add to Cart Confirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <span id="confirmText"></span>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-success" href="" id="yesButton">YES</a>
+                    <button type="button" class="btn btn-danger" id="noButton" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div th:replace="fragment :: footer_menu"/>
 </div>
@@ -114,14 +132,19 @@
             type: "POST",
             url: `/Shopme/cart/add/${productId}/${quantity}`,
             success: function (response) {
-                alert("Product added to cart successfully!");
+                $("#confirmText").text("Product added to cart successfully!");
+                $("#noButton").hide();
+                $("#confirmModal").modal();
             },
             error: function (error) {
                 if (error.status === 401) {
-                    alert("You must login to add product to cart!");
-                    window.location.href = "/Shopme/login";  // Redirect to login page
+                    $("#confirmText").text("You must login to add product to cart!");
+                    $("#yesButton").attr("href", "/Shopme/login");
+                    $("#confirmModal").modal();
                 } else {
-                    alert("Failed to add product to cart!");
+                    $("#confirmText").text("Failed to add product to cart!");
+                    $("#noButton").hide();
+                    $("#confirmModal").modal();
                 }
             }
         });

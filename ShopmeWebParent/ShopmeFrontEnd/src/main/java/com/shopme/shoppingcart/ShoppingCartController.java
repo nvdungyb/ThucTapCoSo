@@ -2,6 +2,7 @@ package com.shopme.shoppingcart;
 
 import com.shopme.common.entity.CartItem;
 import com.shopme.common.entity.Customer;
+import com.shopme.order.OrderService;
 import com.shopme.security.ShopmeCustomerDetails;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +21,10 @@ import java.util.List;
 public class ShoppingCartController {
     @Autowired
     private ShoppingCartService service;
+    @Autowired
+    private OrderService orderService;
 
-    @GetMapping("/cart")
+    @GetMapping("/carts")
     public String viewCart(Model model, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ShopmeCustomerDetails customerDetails = (ShopmeCustomerDetails) authentication.getPrincipal();
@@ -40,19 +43,32 @@ public class ShoppingCartController {
         return "cart/shopping_cart";
     }
 
-    @GetMapping("/cart/delete/{itemId}")
+    @GetMapping("/carts/delete/{itemId}")
     public String deleteCartItem(@PathVariable("itemId") Integer itemId) {
         service.delete(itemId);
-        return "redirect:/cart";
+        return "redirect:/carts";
     }
 
-    @PostMapping("/cart/update")
+    @PostMapping("/carts/update")
     public String updateQuantityProduct(Model model, HttpServletRequest request) {
         Integer itemId = Integer.parseInt(request.getParameter("id"));
         Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 
         service.updateItem(itemId, quantity);
 
-        return "redirect:/cart";
+        return "redirect:/carts";
     }
+
+    @GetMapping("/carts/checkout")
+    public String viewCheckout(HttpServletRequest request, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ShopmeCustomerDetails customerDetails = (ShopmeCustomerDetails) authentication.getPrincipal();
+
+        Customer customer = customerDetails.getCustomer();
+
+        if (orderService.checkout(customer))
+            return "redirect:/orders";
+        return "redirect:/carts";
+    }
+
 }

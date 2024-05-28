@@ -53,7 +53,7 @@ public class ShopmeCustomerDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return customer.isEnabled();
     }
 
     public String getFullname() {

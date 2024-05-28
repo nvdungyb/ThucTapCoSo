@@ -45,4 +45,10 @@ public class ShoppingCartService {
     public void updateItem(Integer itemId, Integer quantity) {
         cartRepository.updateQuantity(itemId, quantity);
     }
+
+    public void deleteAllCartItem(List<CartItem> cartItems) {
+        for (CartItem cartItem : cartItems) {
+            cartRepository.deleteById(cartItem.getId());
+        }
+    }
 }

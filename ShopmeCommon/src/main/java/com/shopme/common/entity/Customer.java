@@ -34,6 +34,8 @@ public class Customer {
     @Column(length = 45)
     private String city;
 
+    private boolean enabled;
+
     public Customer(int id) {
         this.id = id;
     }
