@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment :: page_head('Customer - Shopme Admin')"/>
+
+<body class="container-fluid">
+<div th:replace="navigation :: menu">
+</div>
+
+<div>
+    <h2>Manage Customer</h2>
+<!--    <a th:href="@{/categories/new}">Create New Category</a>-->
+</div>
+
+<div th:if="${message != null}" class="alert alert-success text-center">
+    [[${message}]]
+</div>
+
+<div>
+    <div>
+        <form th:action="@{/customers/page/1}" class="form-inline m-3">
+            <label class="mr-2">Search:</label>
+            <input type="search" name="keyword" th:value="${keyword}" class="form-control"/>
+            &nbsp; &nbsp;
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+            &nbsp; &nbsp;
+            <button type="button" class="btn btn-secondary" onclick="clearFilter()">
+                <i class="fas fa-eraser"></i>
+            </button>
+        </form>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover table-responsive-xl">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>AddressLine1</th>
+            <th>AddressLine2</th>
+            <th>City</th>
+            <th>Enabled</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="customer : ${listCustomers}">
+            <td>[[${customer.id}]]</td>
+            <td>[[${customer.firstName}]]</td>
+            <td>[[${customer.lastName}]]</td>
+            <td>[[${customer.email}]]</td>
+            <td>[[${customer.phoneNumber}]]</td>
+            <td>[[${customer.addressLine1}]]</td>
+            <td>[[${customer.addressLine2}]]</td>
+            <td>[[${customer.city}]]</td>
+            <td>
+                <a th:if="${customer.enabled == true}" class="fas fa-check-circle fa-2x icon-green"
+                   th:href="@{'/customers/' + ${customer.id} + '/enabled/false'}" title="Disable this customer"></a>
+                <a th:if="${customer.enabled == false}" class="fas fa-circle fa-2x icon-dark"
+                   th:href="@{'/customers/' + ${customer.id} + '/enabled/true'}" title="Enable this customer"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="text-center m-1" th:if="${totalItems > 0}">
+    <span>Showing customer # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+</div>
+<div class="text-center m-1" th:unless="${totalItems > 0}">
+    <span>No Customer found</span>
+</div>
+
+<div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/1'}">First</a>
+            </li>
+            <li th:class="${currentPage > 1 ?  'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${currentPage - 1}}">Previous</a>
+            </li>
+
+            <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}"
+                th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${i}}">[[${i}]]</a>
+            </li>
+            <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${currentPage + 1}}">Next</a>
+            </li>
+            <li th:class="${currentPage != totalPages ? 'page-item' : 'page-item disabled'}">
+                <a class="page-link" th:href="@{'/categories/page/' + ${totalPages}}">Last</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Confirmation</h4>
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+
+            <div class="modal-body">
+                <span id="confirmText"></span>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" href="" id="yesButton">YES</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragment :: footer">
+</div>
+
+<script>
+    function clearFilter() {
+        var keywordInput = document.querySelector('input[name="keyword"]');
+        keywordInput.value = '';
+    }
+
+</script>
+
+</body>
+
+</html>
