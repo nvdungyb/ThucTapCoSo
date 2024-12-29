@@ -8,9 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "roles")
+@Data
+@NoArgsConstructor
 public class Role {
 
     @Id
@@ -22,13 +26,6 @@ public class Role {
 
     @Column(length = 150, nullable = false)
     private String description;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Role() {
-    }
 
     public Role(String name) {
         super();
@@ -43,31 +40,6 @@ public class Role {
         super();
         this.name = name;
         this.description = description;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     @Override

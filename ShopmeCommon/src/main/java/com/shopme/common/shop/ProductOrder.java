@@ -1,4 +1,4 @@
-package com.shopme.common.entity;
+package com.shopme.common.shop;
 
 import jakarta.persistence.*;
 import lombok.Data;

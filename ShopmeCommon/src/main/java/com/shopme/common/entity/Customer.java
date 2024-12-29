@@ -8,39 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "customers")
 @NoArgsConstructor
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Customer extends User {
+    @Column(name = "loyalty_points", nullable = false)
+    private int loyaltyPoints;
 
-    private String email;
-    private String password;
-
-    @Column(name = "first_name", length = 45)
-    private String firstName;
-
-    @Column(name = "last_name", length = 45)
-    private String lastName;
-
-    @Column(name = "phone_number", length = 15)
-    private String phoneNumber;
-
-    @Column(name = "address_line1", length = 64)
-    private String addressLine1;
-
-    @Column(name = "address_line2", length = 64)
-    private String addressLine2;
-
-    @Column(length = 45)
-    private String city;
-
-    private boolean enabled;
-
-    public Customer(int id) {
-        this.id = id;
-    }
+    @Column(name = "total_spent", nullable = false)
+    private double totalSpent;
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return this.getFirstName() + " " + this.getLastName();
     }
 }

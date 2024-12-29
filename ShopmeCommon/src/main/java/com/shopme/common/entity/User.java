@@ -1,15 +1,15 @@
 package com.shopme.common.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Data
 public class User {
-    //    Đối tượng được set Id khi lưu vào database, CrudRepository sẽ tự động tạo một giá trị id cho đối tượng do annotation dưới.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,19 +26,31 @@ public class User {
     @Column(name = "last_name", length = 45, nullable = false)
     private String lastName;
 
+    @Column(name = "phone_number", length = 10, nullable = false)
+    private String phoneNumber;
+
     @Column(length = 64)
-    private String photos;
+    private String profilePicture;
 
     private boolean enabled;
+
+    @Column(name = "registration_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date registrationDate;
+
+    @Column(name = "bank_account")
+    private String bankAccount;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-    /*
-     * Nếu sử dụng HashSet trong mapping của JPA sẽ xẩy ra lỗi. Lỗi chính xảy ra ở
-     * phần setter khi hibernate cố gắng gán giá trị của kiểu 'PersistentSet' co
-     * trường roles.
-     */
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Address> addresses = new ArrayList<>();
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 
     public User() {
         super();
@@ -50,78 +62,6 @@ public class User {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFullName(){
-        return this.firstName + " " + this.lastName;
-    }
-
-    public String getPhotos() {
-        return photos;
-    }
-
-    public void setPhotos(String photos) {
-        this.photos = photos;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(Role role) {
-        this.roles.add(role);
     }
 
     @Override
@@ -137,7 +77,7 @@ public class User {
 
     @Transient
     public String getPhotosImagePath() {
-        if (id == null || photos == null) return "/images/default_thumbnail.png";
-        return "/uploads/user-photos/" + this.id + "/" + this.photos;
+        if (id == null || profilePicture == null) return "/images/default_thumbnail.png";
+        return "/uploads/user-photos/" + this.id + "/" + this.profilePicture;
     }
 }

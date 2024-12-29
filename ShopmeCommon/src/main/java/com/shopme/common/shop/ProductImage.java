@@ -1,10 +1,7 @@
-package com.shopme.common.entity;
+package com.shopme.common.shop;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor

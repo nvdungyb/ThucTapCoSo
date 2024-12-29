@@ -1,5 +1,6 @@
-package com.shopme.common.entity;
+package com.shopme.common.shop;
 
+import com.shopme.common.entity.Seller;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Data
 @Table(name = "products")
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,23 +35,27 @@ public class Product {
     @Column(name = "created_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
+
     @Column(name = "updated_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 
+    @Column(nullable = false)
     private boolean enabled;
-    @Column(name = "in_stock")
-    private boolean inStock;
 
-    private float cost;
+    @Column(name = "stock_quantity", nullable = false)
+    private Integer stockQuantity;
+
+    @Column(nullable = false)
     private float price;
 
-    @Column(name = "discount_percent")
-    private float discountPercent;
+    @Column(nullable = false)
+    private String currency;
 
-    private float length;
-    private float width;
-    private float height;
+    @Column(nullable = false)
+    private double rating;
+
+    @Column(nullable = false)
     private float weight;
 
     @Column(name = "main_image", length = 256, nullable = false)
@@ -65,6 +71,10 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductImage> images = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
 
     public void addExtraImage(String imageName) {
         this.images.add(new ProductImage(imageName, this));

@@ -1,4 +1,4 @@
-package com.shopme.common.entity;
+package com.shopme.common.shop;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "brands")
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

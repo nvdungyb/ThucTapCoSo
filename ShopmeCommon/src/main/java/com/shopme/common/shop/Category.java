@@ -1,12 +1,14 @@
-package com.shopme.common.entity;
+package com.shopme.common.shop;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "categories")
+@Data
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
