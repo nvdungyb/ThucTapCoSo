@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests(request -> request
-                        .requestMatchers("/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/signin").permitAll()
+                        .requestMatchers("/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/register").permitAll()
                         .requestMatchers("/users/**").hasAuthority("Admin")
                         .anyRequest().authenticated()
                 )
