@@ -1,14 +1,18 @@
 package com.shopme.admin.product;
 
+import com.shopme.admin.book.BookRepository;
+import com.shopme.admin.clothes.ClothesRepository;
 import com.shopme.admin.laptop.LaptopRepository;
+import com.shopme.admin.shoe.ShoeRepository;
 import com.shopme.common.entity.Seller;
 import com.shopme.common.entity.User;
-import com.shopme.common.shop.Laptop;
-import com.shopme.common.shop.Product;
+import com.shopme.common.shop.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,12 @@ public class ProductService {
     public static final int PRODUCTS_PER_PAGE = 8;
     @Autowired
     private LaptopRepository laptopRepository;
+    @Autowired
+    private ClothesRepository clothesRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private ShoeRepository shoeRepository;
 
     public List<Product> listAll() {
         return (List<Product>) productRepo.findAll();
@@ -92,5 +102,71 @@ public class ProductService {
 
         productRepo.save(laptop);
         return laptop;
+    }
+
+    public Clothes saveClothes(Clothes clothes, User user) {
+        if (clothes.getId() == null) {
+            clothes.setCreatedTime(new Date());
+        } else {
+            Clothes productInDB = clothesRepository.findById(clothes.getId()).get();
+            clothes.setCreatedTime(productInDB.getCreatedTime());
+        }
+
+        if (clothes.getAlias() == null || clothes.getAlias().isBlank()) {
+            String defaultAlias = clothes.getName().replace(" ", "-");
+            clothes.setAlias(defaultAlias);
+        } else {
+            clothes.setAlias(clothes.getAlias().replace(" ", "-"));
+        }
+
+        clothes.setCreatedTime(new Date());
+        clothes.setSeller((Seller) user);
+
+        productRepo.save(clothes);
+        return clothes;
+    }
+
+    public Book saveBook(Book book, User user) {
+        if (book.getId() == null) {
+            book.setCreatedTime(new Date());
+        } else {
+            Book productInDB = bookRepository.findById(book.getId()).get();
+            book.setCreatedTime(productInDB.getCreatedTime());
+        }
+
+        if (book.getAlias() == null || book.getAlias().isBlank()) {
+            String defaultAlias = book.getName().replace(" ", "-");
+            book.setAlias(defaultAlias);
+        } else {
+            book.setAlias(book.getAlias().replace(" ", "-"));
+        }
+
+        book.setCreatedTime(new Date());
+        book.setSeller((Seller) user);
+
+        productRepo.save(book);
+        return book;
+    }
+
+    public Shoe saveShoe(Shoe shoe, User user) {
+        if (shoe.getId() == null) {
+            shoe.setCreatedTime(new Date());
+        } else {
+            Shoe productInDB = shoeRepository.findById(shoe.getId()).get();
+            shoe.setCreatedTime(productInDB.getCreatedTime());
+        }
+
+        if (shoe.getAlias() == null || shoe.getAlias().isBlank()) {
+            String defaultAlias = shoe.getName().replace(" ", "-");
+            shoe.setAlias(defaultAlias);
+        } else {
+            shoe.setAlias(shoe.getAlias().replace(" ", "-"));
+        }
+
+        shoe.setCreatedTime(new Date());
+        shoe.setSeller((Seller) user);
+
+        productRepo.save(shoe);
+        return shoe;
     }
 }

@@ -6,6 +6,7 @@ import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.User;
 import com.shopme.common.shop.*;
 import com.shopme.common.utils.Currency;
+import com.shopme.common.utils.Gender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,13 +81,16 @@ public class ProductController {
             case "shoe":
                 Shoe shoe = new Shoe();
                 model.addAttribute("product", shoe);
+                model.addAttribute("listGender", Arrays.stream(Gender.values()).collect(Collectors.toList()));
                 return "products/product_form_shoe";
             case "book":
                 Book book = new Book();
+                book.setPublicationDate(LocalDateTime.now());
                 model.addAttribute("product", book);
                 return "products/product_form_book";
             case "clothes":
                 Clothes clothes = new Clothes();
+                model.addAttribute("listGender", Arrays.stream(Gender.values()).collect(Collectors.toList()));
                 model.addAttribute("product", clothes);
                 return "products/product_form_clothes";
             default:
@@ -93,15 +98,6 @@ public class ProductController {
                 model.addAttribute("product", product);
                 return "products/product_form";
         }
-//        Product product = new Product();
-//        product.setEnabled(true);
-//        // todo: Need to fix that
-//        model.addAttribute("product", product);
-//        model.addAttribute("listBrand", listBrand);
-//        model.addAttribute("listCurrency", Arrays.stream(Currency.values()).collect(Collectors.toList()));
-//        model.addAttribute("pageTitle", "Create New Product");
-
-//        return "products/product_form";
     }
 
     @PostMapping("/products/save")
@@ -142,6 +138,72 @@ public class ProductController {
             FileUploadUtil.saveFile(uploadDir, fileName, file);
         } else {
             productService.saveLaptop(laptop, user);
+        }
+
+        redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
+        return "redirect:/products";
+    }
+
+    @PostMapping("/clothes/save")
+    public String saveClothes(Clothes clothes, @RequestParam(name = "fileImage", required = false) MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ShopmeUserDetails userDetails = (ShopmeUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        if (!file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            clothes.setMainImage(fileName);
+
+            Clothes savedClothes = productService.saveClothes(clothes, user);
+
+            String uploadDir = "uploads/laptop-images/" + savedClothes.getId();
+            FileUploadUtil.cleanDir(uploadDir);
+            FileUploadUtil.saveFile(uploadDir, fileName, file);
+        } else {
+            productService.saveClothes(clothes, user);
+        }
+
+        redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
+        return "redirect:/products";
+    }
+
+    @PostMapping("/book/save")
+    public String saveBook(Book book, @RequestParam(name = "fileImage", required = false) MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ShopmeUserDetails userDetails = (ShopmeUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        if (!file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            book.setMainImage(fileName);
+
+            Book savedbook = productService.saveBook(book, user);
+
+            String uploadDir = "uploads/laptop-images/" + savedbook.getId();
+            FileUploadUtil.cleanDir(uploadDir);
+            FileUploadUtil.saveFile(uploadDir, fileName, file);
+        } else {
+            productService.saveBook(book, user);
+        }
+
+        redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
+        return "redirect:/products";
+    }
+
+    @PostMapping("/shoe/save")
+    public String saveShoe(Shoe shoe, @RequestParam(name = "fileImage", required = false) MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ShopmeUserDetails userDetails = (ShopmeUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        if (!file.isEmpty()) {
+            String fileName = file.getOriginalFilename();
+            shoe.setMainImage(fileName);
+
+            Shoe savedShoe = productService.saveShoe(shoe, user);
+
+            String uploadDir = "uploads/laptop-images/" + savedShoe.getId();
+            FileUploadUtil.cleanDir(uploadDir);
+            FileUploadUtil.saveFile(uploadDir, fileName, file);
+        } else {
+            productService.saveShoe(shoe, user);
         }
 
         redirectAttributes.addFlashAttribute("message", "The product has been saved successfully.");
