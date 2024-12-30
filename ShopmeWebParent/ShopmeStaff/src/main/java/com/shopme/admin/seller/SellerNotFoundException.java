@@ -1,7 +1,7 @@
 package com.shopme.admin.seller;
 
-public class UserNotFoundException extends Throwable {
+public class SellerNotFoundException extends Throwable {
 
-    public UserNotFoundException(String s) {
+    public SellerNotFoundException(String s) {
     }
 }

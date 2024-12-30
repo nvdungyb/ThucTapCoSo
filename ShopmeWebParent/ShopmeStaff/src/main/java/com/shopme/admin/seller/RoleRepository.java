@@ -1,4 +1,4 @@
-package com.shopme.admin.user;
+package com.shopme.admin.seller;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends CrudRepository<Role, Integer> {
-
     @Query("SELECT r FROM Role r WHERE r.name = ?1")
     Optional<Role> findByName(String roleName);
 }

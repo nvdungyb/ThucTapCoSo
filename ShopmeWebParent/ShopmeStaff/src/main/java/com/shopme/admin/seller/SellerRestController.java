@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserRestController {
+public class SellerRestController {
     @Autowired
     private SellerService service;
 

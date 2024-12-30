@@ -1,4 +1,4 @@
-package com.shopme.admin.user;
+package com.shopme.admin.seller;
 
 import com.shopme.admin.FileUploadUtil;
 import com.shopme.common.entity.Role;
@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class UserController {
+public class SellerController {
     @Autowired
-    private UserService service;
+    private SellerService service;
 
     // Khi người dùng truy cập vào đường dẫn /users
     @GetMapping("/users")
@@ -32,11 +32,11 @@ public class UserController {
 
     @GetMapping("/users/page/{pageNum}")
     public String listByPage(@PathVariable(name = "pageNum") int pageNum, @RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        Page<User> page = service.listByPage(pageNum, keyword);
-        List<User> listUsers = page.getContent();
+        Page<Seller> page = service.listByPage(pageNum, keyword);
+        List<Seller> listUsers = page.getContent();
 
-        long startCount = (pageNum - 1) * UserService.USERS_PER_PAGE + 1;
-        long endCount = startCount + UserService.USERS_PER_PAGE - 1;
+        long startCount = (pageNum - 1) * SellerService.USERS_PER_PAGE + 1;
+        long endCount = startCount + SellerService.USERS_PER_PAGE - 1;
         if (endCount > page.getTotalElements()) {
             endCount = page.getTotalElements();
         }
@@ -64,22 +64,21 @@ public class UserController {
     }
 
     @PostMapping("/users/save")
-    public String saveUser(User user, RedirectAttributes redirectAttributes, @RequestParam("image") MultipartFile multipartFile) throws IOException {
-
+    public String saveUser(Seller seller, RedirectAttributes redirectAttributes, @RequestParam("image") MultipartFile multipartFile) throws IOException {
         if (!multipartFile.isEmpty()) {
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            user.setProfilePicture(fileName);
-            User savedUser = service.save(user);
-            String uploadDir = "uploads/user-photos/" + savedUser.getId();
+            seller.setProfilePicture(fileName);
+            User savedUser = service.save(seller);
+            String uploadDir = "uploads/seller-photos/" + savedUser.getId();
 
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
         } else {
-            if (user.getProfilePicture() == null) user.setProfilePicture(null);
-            service.save(user);
+            if (seller.getProfilePicture() == null) seller.setProfilePicture(null);
+            service.save(seller);
         }
 
-        redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
+        redirectAttributes.addFlashAttribute("message", "The seller has been saved successfully");
         return "redirect:/users";
     }
 
@@ -94,7 +93,7 @@ public class UserController {
             model.addAttribute("listRoles", listRoles);
 
             return "users/user_form";
-        } catch (UserNotFoundException ex) {
+        } catch (SellerNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", "Could not find any user with ID " + id);
             return "redirect:/users";
         }
@@ -105,7 +104,7 @@ public class UserController {
         try {
             service.delete(id);
             redirectAttributes.addFlashAttribute("message", "The user ID " + id + " has been deleted successfully");
-        } catch (UserNotFoundException ex) {
+        } catch (SellerNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", "Could not find any user with id " + id);
         }
 

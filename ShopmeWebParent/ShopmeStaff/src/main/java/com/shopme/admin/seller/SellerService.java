@@ -1,12 +1,11 @@
-package com.shopme.admin.user;
+package com.shopme.admin.seller;
 
 import com.shopme.common.entity.Role;
-import com.shopme.common.entity.User;
+import com.shopme.common.entity.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +16,11 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class UserService {
+public class SellerService {
     public static final int USERS_PER_PAGE = 5;
 
     @Autowired
-    private UserRepository userRepo;
+    private SellerRepository userRepo;
 
     @Autowired
     private RoleRepository roleRepo;
@@ -29,11 +28,11 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<User> listAll() {
-        return (List<User>) userRepo.findAll();
+    public List<Seller> listAll() {
+        return (List<Seller>) userRepo.findAll();
     }
 
-    public Page<User> listByPage(int pageNum, String keyword) {
+    public Page<Seller> listByPage(int pageNum, String keyword) {
         Pageable pageable = PageRequest.of(pageNum - 1, USERS_PER_PAGE);
         if (keyword != null) {
             return userRepo.findAll(keyword, pageable);
@@ -45,28 +44,28 @@ public class UserService {
         return (List<Role>) roleRepo.findAll();
     }
 
-    private void encodePassword(User user) {
+    private void encodePassword(Seller user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
     }
 
-    public User save(User user) {
-        boolean isUpdatingUser = (user.getId() != null);
+    public Seller save(Seller seller) {
+        boolean isUpdatingUser = (seller.getId() != null);
         if (isUpdatingUser) {
-            User exitingUser = userRepo.findById(user.getId()).get();
-            if (user.getPassword().isEmpty()) {
-                user.setPassword(exitingUser.getPassword());
+            Seller exitingUser = userRepo.findById(seller.getId()).get();
+            if (seller.getPassword().isEmpty()) {
+                seller.setPassword(exitingUser.getPassword());
             } else {
-                encodePassword(user);
+                encodePassword(seller);
             }
         } else {
-            encodePassword(user);
+            encodePassword(seller);
         }
-        return userRepo.save(user);
+        return userRepo.save(seller);
     }
 
     public boolean isEmailUnique(Integer id, String email) {
-        User userByEmail = userRepo.getUserByEmail(email);
+        Seller userByEmail = userRepo.getUserByEmail(email);
 
         if (userByEmail == null)
             return true;
@@ -82,18 +81,18 @@ public class UserService {
         return true;
     }
 
-    public User get(Integer id) throws UserNotFoundException {
+    public Seller get(Integer id) throws SellerNotFoundException {
         try {
             return userRepo.findById(id).get();
         } catch (NoSuchElementException ex) {
-            throw new UserNotFoundException("Could not find any user with ID " + id);
+            throw new SellerNotFoundException("Could not find any user with ID " + id);
         }
     }
 
-    public void delete(Integer id) throws UserNotFoundException {
+    public void delete(Integer id) throws SellerNotFoundException {
         Long countById = userRepo.countById(id);
         if (countById == null || countById == 0) {
-            throw new UserNotFoundException("Could not find any user with ID " + id);
+            throw new SellerNotFoundException("Could not find any user with ID " + id);
         } else {
             userRepo.deleteById(id);
         }
@@ -103,17 +102,22 @@ public class UserService {
         userRepo.updateEnabledStatus(id, enabled);
     }
 
-    public void register(User user) {
-        encodePassword(user);
-        user.setEnabled(true);
-        userRepo.save(user);
+    public void register(Seller seller) {
+        encodePassword(seller);
+        seller.setEnabled(true);
+        userRepo.save(seller);
     }
 
-    public void registerSeller(User user) {
-        encodePassword(user);
-        user.setEnabled(true);
+    public void registerSeller(Seller seller) {
+        seller.setNumberOfOrders(0);
+        seller.setShopRating(0.0);
+        seller.setShopName("shopname");
+        seller.setTaxId("123243345");
+
+        encodePassword(seller);
+        seller.setEnabled(true);
         Optional<Role> roleSeller = roleRepo.findByName("SELLER");
-        user.addRole(roleSeller.get());
-        userRepo.save(user);
+        seller.addRole(roleSeller.get());
+        userRepo.save(seller);
     }
 }

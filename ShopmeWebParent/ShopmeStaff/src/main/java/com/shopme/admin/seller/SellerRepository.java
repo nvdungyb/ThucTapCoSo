@@ -1,6 +1,7 @@
 package com.shopme.admin.seller;
 
-import com.shopme.common.entity.User;
+import com.shopme.common.entity.Seller;
+import jakarta.persistence.Inheritance;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,18 +12,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Integer>, PagingAndSortingRepository<User, Integer> {
-    @Query("SELECT u FROM User u WHERE u.email = :email")
-    public User getUserByEmail(@Param("email") String email);
+
+public interface SellerRepository extends CrudRepository<Seller, Integer>, PagingAndSortingRepository<Seller, Integer> {
+    @Query("SELECT u FROM Seller u WHERE u.email = :email")
+    public Seller getUserByEmail(@Param("email") String email);
 
     public long countById(Integer id);
 
-    @Query("UPDATE User u SET u.enabled = ?2 WHERE u.id = ?1")
+    @Query("UPDATE Seller u SET u.enabled = ?2 WHERE u.id = ?1")
     @Modifying
     public void updateEnabledStatus(Integer id, boolean enabled);
 
-    @Query("SELECT u FROM User u WHERE CONCAT(u.email, ' ', u.firstName, ' ', u.lastName) LIKE %?1%")
-    Page<User> findAll(String keyword, Pageable pageable);
+    @Query("SELECT u FROM Seller u WHERE CONCAT(u.email, ' ', u.firstName, ' ', u.lastName) LIKE %?1%")
+    Page<Seller> findAll(String keyword, Pageable pageable);
 }
 
 
