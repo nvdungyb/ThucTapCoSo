@@ -39,12 +39,12 @@ public class ProductService {
         return (List<Product>) productRepo.findAll();
     }
 
-    public Page<Product> listByPage(Integer pagenum, String keyword) {
+    public Page<Product> listByPage(Integer pagenum, String keyword, User user) {
         Pageable pageable = PageRequest.of(pagenum - 1, PRODUCTS_PER_PAGE);
         if (keyword != null && !keyword.isBlank()) {
-            return productRepo.findAll(keyword, pageable);
+            return productRepo.findAll(keyword, pageable, user.getId());
         } else {
-            return productRepo.findAll(pageable);
+            return productRepo.findAll(pageable, user.getId());
         }
     }
 

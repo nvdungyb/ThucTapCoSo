@@ -2,6 +2,7 @@ package com.shopme.admin.product;
 
 import com.shopme.admin.FileUploadUtil;
 import com.shopme.admin.brand.BrandService;
+import com.shopme.admin.category.CategoryService;
 import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.User;
 import com.shopme.common.shop.*;
@@ -34,6 +35,8 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private BrandService brandService;
+    @Autowired
+    private CategoryService categoryService;
 
     Logger logger = LoggerFactory.getLogger(ProductController.class);
 
@@ -44,7 +47,10 @@ public class ProductController {
 
     @GetMapping("/products/page/{pagenum}")
     public String listByPage(@PathVariable(name = "pagenum") Integer pagenum, @RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        Page<Product> page = productService.listByPage(pagenum, keyword);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ShopmeUserDetails userDetails = (ShopmeUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        Page<Product> page = productService.listByPage(pagenum, keyword, user);
 
         List<Product> listProducts = page.getContent();
         long totalItems = page.getTotalElements();
@@ -67,7 +73,10 @@ public class ProductController {
     @GetMapping("/products/new/{productType}")
     public String newProduct(Model model, @PathVariable("productType") String productType) {
         List<Brand> listBrand = brandService.findAll();
+        List<Category> categories = categoryService.findAll();
+
         model.addAttribute("listBrand", listBrand);
+        model.addAttribute("listCategory", categories);
         model.addAttribute("listCurrency", Arrays.stream(Currency.values()).collect(Collectors.toList()));
         model.addAttribute("pageTitle", "Create New Product");
 
@@ -133,7 +142,7 @@ public class ProductController {
 
             Laptop savedLaptop = productService.saveLaptop(laptop, user);
 
-            String uploadDir = "uploads/laptop-images/" + savedLaptop.getId();
+            String uploadDir = "uploads/product-images/" + savedLaptop.getId();
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, file);
         } else {
@@ -155,7 +164,7 @@ public class ProductController {
 
             Clothes savedClothes = productService.saveClothes(clothes, user);
 
-            String uploadDir = "uploads/laptop-images/" + savedClothes.getId();
+            String uploadDir = "uploads/product-images/" + savedClothes.getId();
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, file);
         } else {
@@ -177,7 +186,7 @@ public class ProductController {
 
             Book savedbook = productService.saveBook(book, user);
 
-            String uploadDir = "uploads/laptop-images/" + savedbook.getId();
+            String uploadDir = "uploads/product-images/" + savedbook.getId();
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, file);
         } else {
@@ -199,7 +208,7 @@ public class ProductController {
 
             Shoe savedShoe = productService.saveShoe(shoe, user);
 
-            String uploadDir = "uploads/laptop-images/" + savedShoe.getId();
+            String uploadDir = "uploads/product-images/" + savedShoe.getId();
             FileUploadUtil.cleanDir(uploadDir);
             FileUploadUtil.saveFile(uploadDir, fileName, file);
         } else {
