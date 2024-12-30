@@ -9,7 +9,17 @@
 
 <div>
     <h2>Manage Products</h2>
-    <a th:href="@{/products/new}">Create New Product</a>
+    <div>
+        <label for="productType">Create New Product:</label>
+        <select id="productType" onchange="redirectToProductForm()">
+            <option value="">Select Product Type</option>
+            <option value="laptop">Laptop</option>
+            <option value="shoe">Shoe</option>
+            <option value="book">Book</option>
+            <option value="clothes">Clothes</option>
+            <option value="electronic">Electronic</option>
+        </select>
+    </div>
 </div>
 
 <div th:if="${message != null}" class="alert alert-success text-center">
@@ -150,6 +160,12 @@
         keywordInput.value = '';
     }
 
+    function redirectToProductForm() {
+        const productType = document.getElementById("productType").value;
+        if (productType) {
+            window.location.href = `/techshop/products/new/${productType}`;
+        }
+    }
 </script>
 
 </body>
