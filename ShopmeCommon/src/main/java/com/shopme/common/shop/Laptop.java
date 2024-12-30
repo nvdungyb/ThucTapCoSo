@@ -1,11 +1,13 @@
 package com.shopme.common.shop;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Entity
 @Data
+@DiscriminatorValue("Laptop")
 public class Laptop extends Product {
     @Column(length = 10, nullable = false)
     private String processor;

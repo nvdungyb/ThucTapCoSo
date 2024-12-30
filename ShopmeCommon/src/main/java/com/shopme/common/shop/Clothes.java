@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = "sizeList")
 @ToString(callSuper = true, exclude = "sizeList")
+@DiscriminatorValue("Clothes")
 public class Clothes extends Product {
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)

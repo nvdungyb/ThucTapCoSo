@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
