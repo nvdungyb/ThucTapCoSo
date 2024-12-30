@@ -231,10 +231,24 @@ public class ProductController {
         try {
             Product product = productService.findById(id);
             List<Brand> listBrand = brandService.findAll();
+
             model.addAttribute("product", product);
             model.addAttribute("listBrand", listBrand);
+            model.addAttribute("listCurrency", Arrays.stream(Currency.values()).collect(Collectors.toList()));
+            model.addAttribute("listGender", Arrays.stream(Gender.values()).collect(Collectors.toList()));
             model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
-            return "products/product_form";
+
+            if (product instanceof Laptop) {
+                return "products/product_form_laptop";
+            } else if (product instanceof Shoe) {
+                return "products/product_form_shoe";
+            } else if (product instanceof Book) {
+                return "products/product_form_book";
+            } else if (product instanceof Clothes) {
+                return "products/product_form_clothes";
+            } else {
+                return "products/product_form";
+            }
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
             return "redirect:/products";
