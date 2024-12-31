@@ -22,9 +22,6 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "product_price", nullable = false)
-    private double productPrice;
-
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
@@ -41,6 +38,6 @@ public class CartItem {
 
     @Transient
     public double getSubtotal() {
-        return this.productPrice * quantity;
+        return this.product.getPrice() * quantity;
     }
 }

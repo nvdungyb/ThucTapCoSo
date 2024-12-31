@@ -26,7 +26,7 @@ public class Cart {
     private double discountAmount;
     private double finalPrice;
      */
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
