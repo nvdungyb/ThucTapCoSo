@@ -1,10 +1,14 @@
 package com.shopme.order;
 
+import com.shopme.cart_item.CartItemRepository;
 import com.shopme.common.shop.CartItem;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.shop.Order;
+import com.shopme.common.shop.OrderItem;
 import com.shopme.common.shop.ProductOrder;
+import com.shopme.common.utils.DeliveryStatus;
 import com.shopme.common.utils.OrderStatus;
+import com.shopme.shoppingcart.CartRepository;
 import com.shopme.shoppingcart.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,8 @@ public class OrderService {
     private ProductOrderRepository productOrderRepository;
     @Autowired
     private ShoppingCartService service;
+    @Autowired
+    private CartRepository cartRepository;
 
     public boolean checkout(Customer customer) {
         try {
@@ -70,5 +76,23 @@ public class OrderService {
     public List<ProductOrder> listProductOrders(Integer id) {
         List<ProductOrder> productOrders = productOrderRepository.findAllByOrderId(id);
         return productOrders;
+    }
+
+    public void placeOrder(Order order) {
+        List<CartItem> cartItems = cartRepository.findByCustomerId(order.getCustomer().getId()).getCartItems();
+        cartItems.forEach(cartItem -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setProductPrice(cartItem.getProduct().getPrice());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setOrder(order);
+            orderItem.setCreateAt(new Date());
+            order.getOrderItems().add(orderItem);
+        });
+        order.setDeliveryStatus(DeliveryStatus.PENDING);
+        order.setUpdateDate(new Date());
+
+        cartRepository.deleteAllItemsById(cartItems.stream().map(CartItem::getId).toList());
+        orderRepository.save(order);
     }
 }

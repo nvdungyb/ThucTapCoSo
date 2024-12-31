@@ -15,6 +15,11 @@ import java.util.List;
 @Repository
 public interface CartRepository extends CrudRepository<Cart, Integer> {
     Cart findByCustomerId(Integer id);
+
+    @Modifying
+    @Query("DELETE FROM CartItem c WHERE c.id IN :list")
+    void deleteAllItemsById(List<Integer> list);
+
 //    CartItem findByProductId(Integer productId);
 
 //    @Modifying
