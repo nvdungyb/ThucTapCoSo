@@ -2,12 +2,16 @@ package com.shopme.common.shop;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false, exclude = {"order"})
+@ToString(callSuper = true, exclude = "order")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

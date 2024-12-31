@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@EqualsAndHashCode(callSuper = false, exclude = "cartItems")
+@EqualsAndHashCode(callSuper = false, exclude = {"customer", "cartItems"})
 @ToString(callSuper = true, exclude = "cartItems")
 @Table(name = "carts")
 @Data
