@@ -19,7 +19,7 @@
                     <div class="col-1">
                         <div>[[${status.count}]]</div>
                         <div>
-                            <a class="fas fa-trash" th:href="@{/carts/delete/{id}(id=${item.id})}"></a>
+                            <a class="fa-solid fa-trash" th:href="@{/cart_item/delete/{id}(id=${item.id})}"></a>
                         </div>
                     </div>
                     <div class="col-3">
@@ -51,11 +51,11 @@
                             <span>X</span>
                             &nbsp;
                             <span class="price"
-                                  th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                                  th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' ' +  ${item.product.currency}"></span>
                         </div>
                         <div>
                             <span class="h5 subtotal" th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} +
-                            ' VND'"></span>
+                            ' ' +  ${item.product.currency}"></span>
                         </div>
                     </div>
 

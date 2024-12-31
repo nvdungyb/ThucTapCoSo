@@ -18,4 +18,8 @@ public interface CartItemRepository extends CrudRepository<CartItem, Integer> {
     void updateQuantity(@Param("id") Integer id, @Param("quantity") int quantity);
 
     List<CartItem> findAllByCartId(Integer id);
+
+    @Modifying
+    @Query("DELETE FROM CartItem c WHERE c.id = :itemId AND c.cart.id = :id")
+    void deleteByItemId(Integer itemId, Integer id);
 }
