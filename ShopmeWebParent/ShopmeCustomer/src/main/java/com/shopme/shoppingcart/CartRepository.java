@@ -1,5 +1,6 @@
 package com.shopme.shoppingcart;
 
+import com.shopme.common.shop.Cart;
 import com.shopme.common.shop.CartItem;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.shop.Product;
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CartRepository extends CrudRepository<CartItem, Integer> {
-    CartItem findByProductId(Integer productId);
+public interface CartRepository extends CrudRepository<Cart, Integer> {
+    Cart findByCustomerId(Integer id);
+//    CartItem findByProductId(Integer productId);
 
-    @Modifying
-    @Query("UPDATE CartItem c SET c.quantity = :quantity WHERE c.id = :id")
-    void updateQuantity(@Param("id") Integer id, @Param("quantity") int quantity);
+//    @Modifying
+//    @Query("UPDATE CartItem c SET c.quantity = :quantity WHERE c.id = :id")
+//    void updateQuantity(@Param("id") Integer id, @Param("quantity") int quantity);
 //    public List<CartItem> findByCustomer(Customer customer);
 //
 //    public CartItem findByCustomerAndProduct(Customer customer, Product product);

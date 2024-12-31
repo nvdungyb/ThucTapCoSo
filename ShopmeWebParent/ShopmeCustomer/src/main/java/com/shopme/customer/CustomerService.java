@@ -1,6 +1,8 @@
 package com.shopme.customer;
 
 import com.shopme.common.entity.Customer;
+import com.shopme.common.shop.Cart;
+import com.shopme.shoppingcart.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ public class CustomerService {
     private CustomerRepository repo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CartRepository cartRepository;
 
     public Customer save(Customer customer) {
         boolean isUpdatingUser = (customer.getId() != null);
@@ -24,7 +28,19 @@ public class CustomerService {
         } else {
             encodePassword(customer);
         }
-        return repo.save(customer);
+        return saveCustomerAndCart(customer);
+    }
+
+    private Customer saveCustomerAndCart(Customer customer) {
+        Cart cart = new Cart();
+        cart.setActice(true);
+        cart.setCreateAt(customer.getRegistrationDate());
+        cart.setUpdateAt(customer.getRegistrationDate());
+        cart.setCustomer(customer);
+
+        Customer entry = repo.save(customer);
+        cartRepository.save(cart);
+        return entry;
     }
 
     private void encodePassword(Customer customer) {

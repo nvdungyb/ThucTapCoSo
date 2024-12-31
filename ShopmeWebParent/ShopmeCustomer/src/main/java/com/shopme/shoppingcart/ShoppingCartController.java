@@ -29,7 +29,7 @@ public class ShoppingCartController {
         ShopmeCustomerDetails customerDetails = (ShopmeCustomerDetails) authentication.getPrincipal();
         Customer customer = customerDetails.getCustomer();
 
-        List<CartItem> cartItems = service.listCartItems(customer);
+        List<CartItem> cartItems = service.findAllCustomerCartItems(customer);
 
         float estimatedTotal = 0;
         for (CartItem cart : cartItems) {
@@ -40,12 +40,6 @@ public class ShoppingCartController {
         model.addAttribute("estimatedTotal", estimatedTotal);
 
         return "cart/shopping_cart";
-    }
-
-    @GetMapping("/carts/delete/{itemId}")
-    public String deleteCartItem(@PathVariable("itemId") Integer itemId) {
-        service.delete(itemId);
-        return "redirect:/carts";
     }
 
     @PostMapping("/carts/update")

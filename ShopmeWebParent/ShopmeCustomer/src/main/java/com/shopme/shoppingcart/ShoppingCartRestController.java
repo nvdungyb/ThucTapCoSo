@@ -1,5 +1,6 @@
 package com.shopme.shoppingcart;
 
+import com.shopme.cart_item.CartItemRepository;
 import com.shopme.common.entity.Customer;
 import com.shopme.customer.CustomerRepository;
 import com.shopme.security.ShopmeCustomerDetails;
@@ -28,9 +29,9 @@ public class ShoppingCartRestController {
             Integer updatedQuantity = cartService.addProduct(productId, quantity, customer);
             return ResponseEntity.ok("Product added to cart successfully!");
         } catch (Exception e) {
-            if (customer == null)
+            if (customer == null) {
                 return ResponseEntity.status(401).body("You must login to add product to cart!");
-
+            }
             return ResponseEntity.status(500).body("Failed to add product to cart!");
         }
     }
