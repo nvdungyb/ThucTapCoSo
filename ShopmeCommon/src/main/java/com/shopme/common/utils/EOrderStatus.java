@@ -1,5 +1,5 @@
 package com.shopme.common.utils;
 
-public enum OrderStatus {
+public enum EOrderStatus {
     PENDING, CONFIRMED, CANCELLED, COMPLETED
 }

@@ -1,5 +1,5 @@
 package com.shopme.common.utils;
 
-public enum Currency {
+public enum ECurrency {
     USD, VND, EUR
 }

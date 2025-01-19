@@ -1,4 +1,4 @@
-package com.shopme.security;
+package com.shopme.security.service;
 
 import com.shopme.common.entity.Customer;
 import com.shopme.customer.CustomerRepository;
@@ -9,16 +9,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ShopmeCustomerDetailsService implements UserDetailsService {
+public class CustomerDetailsService implements UserDetailsService {
     @Autowired
     private CustomerRepository customerRepo;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Customer customer = customerRepo.getCustomerByEmail(email);
-        if (customer != null)
-            return new ShopmeCustomerDetails(customer);
+        Customer customer = customerRepo.getCustomerByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Could not find user with this email: " + email));
 
-        throw new UsernameNotFoundException("Could not find user with this email!");
+        return CustomerDetailsImpl.build(customer);
     }
 }

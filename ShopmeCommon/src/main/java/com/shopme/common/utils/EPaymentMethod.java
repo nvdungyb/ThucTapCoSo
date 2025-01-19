@@ -1,5 +1,5 @@
 package com.shopme.common.utils;
 
-public enum PaymentMethod {
+public enum EPaymentMethod {
     BANKTRANSFER, CASHONDELIVERY, CREDITCARD
 }

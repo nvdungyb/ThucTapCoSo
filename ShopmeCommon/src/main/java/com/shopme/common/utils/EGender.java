@@ -1,5 +1,5 @@
 package com.shopme.common.utils;
 
-public enum Gender {
+public enum EGender {
     MALE, FEMALE, UNISEX
 }

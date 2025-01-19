@@ -1,5 +1,5 @@
 package com.shopme.common.utils;
 
-public enum DeliveryStatus {
+public enum EDeliveryStatus {
     PENDING, SHIPPED, DELIVERED, RETURNED, CANCELLED
 }
