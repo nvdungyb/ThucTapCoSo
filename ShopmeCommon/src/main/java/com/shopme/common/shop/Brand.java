@@ -14,7 +14,7 @@ import java.util.Set;
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, length = 45, unique = true)
     private String name;
@@ -35,7 +35,7 @@ public class Brand {
         return "/uploads/brandLogo/" + this.id + "/" + this.logo;
     }
 
-    public Brand(int id, String name) {
+    public Brand(long id, String name) {
         this.id = id;
         this.name = name;
     }

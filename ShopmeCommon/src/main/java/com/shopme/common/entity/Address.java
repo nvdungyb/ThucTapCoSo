@@ -8,7 +8,7 @@ import lombok.Data;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(length = 40, nullable = false)
     private String province;

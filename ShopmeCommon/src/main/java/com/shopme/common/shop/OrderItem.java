@@ -15,9 +15,9 @@ import java.util.Date;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -44,4 +44,9 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @Transient
+    public String toString() {
+        return product.toString();
+    }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /* đây là giá trị dẫn xuất, không lưu vào db
     private double totalPrice;

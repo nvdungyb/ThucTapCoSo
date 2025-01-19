@@ -11,7 +11,7 @@ import lombok.Data;
 public class ClothesSize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     @Min(30)

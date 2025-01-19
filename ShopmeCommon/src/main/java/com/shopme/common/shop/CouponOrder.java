@@ -11,7 +11,7 @@ import java.util.Date;
 public class CouponOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name = "discount_percentage", nullable = false)
     private double discountPercentage;

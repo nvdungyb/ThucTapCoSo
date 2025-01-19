@@ -1,9 +1,9 @@
 package com.shopme.common.shop;
 
 import com.shopme.common.entity.Customer;
-import com.shopme.common.utils.DeliveryStatus;
-import com.shopme.common.utils.OrderStatus;
-import com.shopme.common.utils.PaymentMethod;
+import com.shopme.common.utils.EDeliveryStatus;
+import com.shopme.common.utils.EOrderStatus;
+import com.shopme.common.utils.EPaymentMethod;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +22,7 @@ import java.util.List;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     @Column(name = "order_time")
@@ -36,7 +36,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
-    private OrderStatus orderStatus;
+    private EOrderStatus orderStatus;
 
     @Column(name = "shipping_address")
     private String shippingAddress;
@@ -47,7 +47,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "delivery_status", nullable = false)
-    private DeliveryStatus deliveryStatus;
+    private EDeliveryStatus deliveryStatus;
 
     @Column(name = "update_date", nullable = false)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
@@ -55,7 +55,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
+    private EPaymentMethod paymentMethod;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")

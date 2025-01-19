@@ -3,17 +3,19 @@ package com.shopme.common.entity;
 import java.util.*;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Data
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+@Builder
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(length = 128, nullable = false, unique = true)
     private String email;
@@ -42,11 +44,14 @@ public class User {
     @Column(name = "bank_account")
     private String bankAccount;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",
+            fetch = FetchType.LAZY)
     private List<Address> addresses = new ArrayList<>();
 
     public void addRole(Role role) {
@@ -55,6 +60,11 @@ public class User {
 
     public User() {
         super();
+    }
+
+    public User(long id) {
+        super();
+        this.id = id;
     }
 
     public User(String email, String password, String firstName, String lastName) {

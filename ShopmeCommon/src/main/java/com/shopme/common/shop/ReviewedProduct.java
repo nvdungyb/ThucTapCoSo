@@ -12,7 +12,7 @@ import lombok.Data;
 public class ReviewedProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", nullable = false)

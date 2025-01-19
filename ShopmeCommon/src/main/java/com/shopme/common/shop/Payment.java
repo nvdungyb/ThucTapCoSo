@@ -1,8 +1,8 @@
 package com.shopme.common.shop;
 
-import com.shopme.common.utils.Currency;
-import com.shopme.common.utils.PaymentMethod;
-import com.shopme.common.utils.PaymentStatus;
+import com.shopme.common.utils.ECurrency;
+import com.shopme.common.utils.EPaymentMethod;
+import com.shopme.common.utils.EPaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,22 +15,22 @@ import java.util.Date;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
+    private EPaymentMethod paymentMethod;
 
     @Column(nullable = false)
     private double amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Currency currency;
+    private ECurrency currency;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
-    private PaymentStatus paymentStatus;
+    private EPaymentStatus paymentStatus;
 
     @Column(name = "payment_date", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
