@@ -1,14 +1,20 @@
 package com.shopme.common.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
 @Entity
 @Data
 @DiscriminatorValue("Seller")
-public class Seller extends User {
+public class Seller {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private User user;
+
     @Column(length = 10, name = "tax_id", nullable = false)
     private String taxId;
 
@@ -22,6 +28,6 @@ public class Seller extends User {
     private Integer numberOfOrders;
 
     public String toString() {
-        return this.getFirstName() + " " + this.getLastName() + " - " + this.shopName;
+        return this.user.getFirstName() + " " + this.user.getLastName() + " - " + this.shopName;
     }
 }

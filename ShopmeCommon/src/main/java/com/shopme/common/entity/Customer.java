@@ -2,29 +2,40 @@ package com.shopme.common.entity;
 
 import com.shopme.common.shop.Cart;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Entity
-@Data
+@Getter
+@Builder
 @Table(name = "customers")
-@DiscriminatorValue("Customer")
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(callSuper = true, exclude = "cart")
-public class Customer extends User {
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = ALL, fetch = FetchType.LAZY)
+    private User user;
+
     @Column(name = "loyalty_points", nullable = false)
     private int loyaltyPoints;
 
     @Column(name = "total_spent", nullable = false)
     private double totalSpent;
 
-    public String getFullName() {
-        return this.getFirstName() + " " + this.getLastName();
+    public Customer(long customerId) {
+        this.id = customerId;
     }
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public String getFullName() {
+        return this.user.getFirstName() + " " + this.user.getLastName();
+    }
+
+    @OneToOne(mappedBy = "customer", cascade = ALL, fetch = FetchType.LAZY)
     private Cart cart;
 }
