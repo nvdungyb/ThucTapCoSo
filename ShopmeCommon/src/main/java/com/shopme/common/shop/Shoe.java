@@ -10,10 +10,15 @@ import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = "sizeList")
 @ToString(callSuper = true, exclude = "sizeList")
-@DiscriminatorValue("Shoe")
-public class Shoe extends Product {
+public class Shoe {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Product product;
+
     @Column(length = 10, nullable = false)
     private String color;
 

@@ -1,14 +1,19 @@
 package com.shopme.common.shop;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-@DiscriminatorValue("Laptop")
-public class Laptop extends Product {
+public class Laptop {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     @Column(length = 10, nullable = false)
     private String processor;
 

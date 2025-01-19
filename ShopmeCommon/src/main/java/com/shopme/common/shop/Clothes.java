@@ -1,6 +1,6 @@
 package com.shopme.common.shop;
 
-import com.shopme.common.utils.Gender;
+import com.shopme.common.utils.EGender;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,13 +11,19 @@ import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = "sizeList")
 @ToString(callSuper = true, exclude = "sizeList")
 @DiscriminatorValue("Clothes")
-public class Clothes extends Product {
+public class Clothes {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Product product;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
-    private Gender gender;
+    private EGender gender;
 
     @Column(length = 10, nullable = false)
     private String color;
@@ -25,6 +31,6 @@ public class Clothes extends Product {
     @Column(length = 30, nullable = false)
     private String material;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY)
     private List<ClothesSize> sizeList = new ArrayList<>();
 }

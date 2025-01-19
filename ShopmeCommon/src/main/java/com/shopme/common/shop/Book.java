@@ -1,9 +1,6 @@
 package com.shopme.common.shop;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,8 +9,14 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "books")
-@DiscriminatorValue("Book")
-public class Book extends Product {
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Product product;
+
     private String author;
 
     private String publisher;

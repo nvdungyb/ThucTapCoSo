@@ -14,12 +14,10 @@ import java.util.Set;
 @Data
 @Table(name = "products")
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "product_type", discriminatorType = DiscriminatorType.STRING)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, length = 256, nullable = false)
     private String name;
@@ -87,8 +85,13 @@ public class Product {
         return "/uploads/product-images/" + this.id + "/" + this.mainImage;
     }
 
-    public Product(int id) {
+    public Product(Long id) {
         this.id = id;
+    }
+
+    @Transient
+    public String toString() {
+        return this.name + " " + this.alias + " " + this.shortDescription + " " + this.fullDescription + " " + this.createdTime + " " + this.updatedTime + " " + this.enabled + " " + this.stockQuantity + " " + this.price + " " + this.currency + " " + this.rating + " " + this.weight + " " + this.mainImage + " " + this.category + " " + this.brand + " " + this.images + " " + this.seller;
     }
 
 }
