@@ -5,6 +5,7 @@ import com.shopme.advice.exception.RoleNotFoundException;
 import com.shopme.common.entity.Customer;
 import com.shopme.message.dto.request.CustomerRegisterDto;
 import com.shopme.message.ApiResponse;
+import com.shopme.message.dto.request.EmailCheckDto;
 import com.shopme.message.dto.response.CustomerResponseDto;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -13,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -25,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController
-@Validated
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
@@ -39,16 +36,6 @@ public class CustomerController {
 
         redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
         return savedCustomer;
-    }
-
-    @PostMapping("/customer/register")
-    public String registerCustomer(Customer customer, RedirectAttributes redirectAttributes) {
-        customer.getUser().setEnabled(true);
-        customer.getUser().setRegistrationDate(new Date());
-
-        customerService.save(customer);
-        redirectAttributes.addFlashAttribute("message", "You have registered successfully. Please login.");
-        return "redirect:/login";
     }
 
     @PostMapping("/customers/register")
@@ -65,5 +52,22 @@ public class CustomerController {
                 .path("/customers/register")
                 .build()
         );
+    }
+
+    @PostMapping("/customers/email/uniqueness")
+    public ResponseEntity<?> checkDuplicateEmail(@RequestBody EmailCheckDto emailCheckDto) {
+        logger.info("EmailCheck: {}", emailCheckDto);
+
+        Boolean isUnique = customerService.isEmailUnique(emailCheckDto.getId(), emailCheckDto.getEmail());
+        ApiResponse response = ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(isUnique ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                .message(isUnique ? "Email is unique" : "Email is already used. Please choose another email")
+                .data(null)
+                .path("/customers/email/uniqueness")
+                .build();
+
+        return isUnique ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

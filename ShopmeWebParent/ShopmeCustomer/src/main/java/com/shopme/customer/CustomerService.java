@@ -67,15 +67,17 @@ public class CustomerService {
         customer.getUser().setPassword(encodedPassword);
     }
 
-//    public boolean isEmailUnique(Long id, String email) {
-//        Customer customerByEmail = repo.findByEmail(email);
-//        if (customerByEmail == null) return true;
-//        boolean isCreatingNew = (id == null);
-//        if (isCreatingNew || customerByEmail.getId() != id) {
-//            return false;
-//        }
-//        return true;
-//    }
+    public boolean isEmailUnique(Long id, String email) {
+        Optional<Customer> customerOptional = customerRepository.findByUserEmail(email);
+        if (customerOptional.isEmpty())
+            return true;
+
+        boolean isCreatingNew = (id == null);
+        if (isCreatingNew || customerOptional.map(Customer::getId).get() != id) {
+            return false;
+        }
+        return true;
+    }
 
     public Customer register(CustomerRegisterDto registerDto) throws EmailAlreadyExistsException, RoleNotFoundException {
         // Check if this email is already in use.
