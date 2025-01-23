@@ -41,7 +41,7 @@ public class CustomerRegisterDto {
     private double totalSpent;
 
     public CustomerRegisterDto() {
-        this.enabled = true;
+        this.enabled = false;
         this.registrationDate = new Date();
         this.loyaltyPoints = 0;
         this.totalSpent = 0.0;
