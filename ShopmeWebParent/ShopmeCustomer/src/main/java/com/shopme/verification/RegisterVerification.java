@@ -1,6 +1,7 @@
 package com.shopme.verification;
 
 import com.shopme.advice.exception.InvalidTokenException;
+import com.shopme.advice.exception.RedisFailureException;
 import com.shopme.advice.exception.TooManyRequestsException;
 import com.shopme.common.entity.User;
 import com.shopme.mail.MailService;
@@ -28,7 +29,7 @@ public class RegisterVerification {
         this.userRepository = userRepository;
     }
 
-    public void sendVerificationToken(String email) throws TooManyRequestsException {
+    public void sendVerificationToken(String email) throws TooManyRequestsException, RedisFailureException {
         String lastSentTime = redisService.getLastSentTime(email);
 
         if (lastSentTime != null && withinRateLimit(lastSentTime)) {

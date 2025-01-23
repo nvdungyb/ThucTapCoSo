@@ -1,8 +1,7 @@
 package com.shopme.advice;
 
-import com.shopme.advice.exception.EmailAlreadyExistsException;
-import com.shopme.advice.exception.RoleNotFoundException;
-import com.shopme.message.response.ApiResponse;
+import com.shopme.advice.exception.*;
+import com.shopme.message.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -84,4 +83,48 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenException(Exception ex) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.builder()
+                        .timestamp(timestamp)
+                        .status(HttpStatus.UNAUTHORIZED.value())
+                        .message("Invalid or expired token")
+                        .errors(Map.of("errors", ex.getMessage()))
+                        .path(null)
+                        .data(null)
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<?> handleTooManyRequestsException(Exception ex) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(ApiResponse.builder()
+                        .timestamp(timestamp)
+                        .status(HttpStatus.TOO_MANY_REQUESTS.value())
+                        .message("Too many requests")
+                        .errors(Map.of("errors", ex.getMessage()))
+                        .path(null)
+                        .data(null)
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(RedisFailureException.class)
+    public ResponseEntity<?> handleRedisFailureException(Exception ex) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY)
+                .body(ApiResponse.builder()
+                        .timestamp(timestamp)
+                        .status(HttpStatus.FAILED_DEPENDENCY.value())
+                        .message("Redis failure")
+                        .errors(Map.of("errors", ex.getMessage()))
+                        .path(null)
+                        .data(null)
+                        .build()
+                );
+    }
 }

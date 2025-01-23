@@ -1,9 +1,6 @@
 package com.shopme.customer;
 
-import com.shopme.advice.exception.EmailAlreadyExistsException;
-import com.shopme.advice.exception.InvalidTokenException;
-import com.shopme.advice.exception.RoleNotFoundException;
-import com.shopme.advice.exception.TooManyRequestsException;
+import com.shopme.advice.exception.*;
 import com.shopme.common.entity.Customer;
 import com.shopme.mail.MailService;
 import com.shopme.message.dto.request.CustomerRegisterDto;
@@ -65,7 +62,7 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/email/verification")
-    public ResponseEntity<?> verificationEmail(@RequestBody Map<String, String> requestBody) throws TooManyRequestsException {
+    public ResponseEntity<?> verificationEmail(@RequestBody Map<String, String> requestBody) throws TooManyRequestsException, RedisFailureException {
         String email = requestBody.get("email");
         logger.info("Email: {}", email);
         boolean isValidEmail = MailService.isValidEmail(email);
