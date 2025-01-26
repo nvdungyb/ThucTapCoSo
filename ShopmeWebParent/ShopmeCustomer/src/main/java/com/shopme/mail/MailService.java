@@ -17,6 +17,8 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MailService.class);
+
     // @Async annotation is used to run this method in a separate thread.
     @Async
     public void sendEmailVerification(String email, String token) {
@@ -29,8 +31,18 @@ public class MailService {
         try {
             sendHtmlEmail(email, subject, message);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
+    }
+
+    @Async
+    public void sendAuthCodeForgotPassword(String email, String token) throws MessagingException {
+        String subject = "Forgot Password";
+        String message = "<h2>Forgot Password</h2>"
+                + "<p>Use the code below to reset your password:</p>"
+                + "<h3>" + token + "</h3>";
+
+        sendHtmlEmail(email, subject, message);
     }
 
     private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {

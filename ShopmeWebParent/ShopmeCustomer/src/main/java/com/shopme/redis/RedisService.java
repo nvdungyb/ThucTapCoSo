@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Email;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -18,6 +20,8 @@ public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
     private static final String prefixValidationKey = "validation";
     private static final String prefixTimestampKey = "timestamp";
+    private static final String prefixAuthCodeKey = "auth_code";
+    private static final String prefixChangePasswordKey = "change_password";
 
     public RedisService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -45,6 +49,7 @@ public class RedisService {
         redisTemplate.opsForHash().delete(key, token);
     }
 
+    // todo: we need customize the ttl for each key.
     // todo: Token should be encrypted.
     // todo: Performance should use redis pipeline.
     private void saveToHSet(String hashKey, Object value, Function<String, String> genKeyFunc) throws RedisFailureException {
@@ -74,5 +79,35 @@ public class RedisService {
             log.warn("No timestamp found for email: {}", email);
         }
         return lastTime;
+    }
+
+    public void saveAuthCode(String email, String authCode) throws RedisFailureException {
+        saveToHSet(email, authCode, this::genAuthCodeKey);
+    }
+
+    public String getAuthCode(String email) {
+        String key = genAuthCodeKey(email);
+        String authCode = (String) redisTemplate.opsForHash().get(key, email);
+        if (authCode == null) {
+            log.warn("No auth code found for email: {}", email);
+        }
+        return authCode;
+    }
+
+    private String genAuthCodeKey(String s) {
+        return prefixAuthCodeKey + ":" + s;
+    }
+
+    public void deleteAuthCode(String email) {
+        String key = genAuthCodeKey(email);
+        redisTemplate.opsForHash().delete(key, email);
+    }
+
+    public void saveChangePasswordToken(@Email String email, String value) throws RedisFailureException {
+        saveToHSet(email, value, this::genChangePasswordKey);
+    }
+
+    private String genChangePasswordKey(String s) {
+        return prefixChangePasswordKey + ":" + s;
     }
 }
