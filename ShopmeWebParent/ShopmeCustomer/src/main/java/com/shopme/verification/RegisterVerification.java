@@ -37,7 +37,7 @@ public class RegisterVerification {
         }
 
         String token = tokenGenerator.generateUUIDToken();
-        mailService.emailVerification(email, token);
+        mailService.sendEmailVerification(email, token);
         redisService.saveToken(email, token);
         redisService.saveLastSentTime(email, String.valueOf(System.currentTimeMillis()));
     }
