@@ -5,7 +5,6 @@ import com.shopme.advice.exception.RoleNotFoundException;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
-import com.shopme.common.shop.Cart;
 import com.shopme.common.utils.ERole;
 import com.shopme.message.dto.request.CustomerRegisterDto;
 import com.shopme.role.RoleRepository;
@@ -15,14 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
-    @Autowired
-    private CustomerRepository repo;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -35,32 +34,32 @@ public class CustomerService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Customer save(Customer customer) {
-        boolean isUpdatingUser = (customer.getId() != null);
-        if (isUpdatingUser) {
-            Customer exitingUser = repo.findById(customer.getId()).get();
-            if (customer.getUser().getPassword().isEmpty()) {
-                customer.getUser().setPassword(exitingUser.getUser().getPassword());
-            } else {
-                encodePassword(customer);
-            }
-        } else {
-            encodePassword(customer);
-        }
-        return saveCustomerAndCart(customer);
-    }
-
-    private Customer saveCustomerAndCart(Customer customer) {
-        Cart cart = new Cart();
-        cart.setActice(true);
-        cart.setCreateAt(customer.getUser().getRegistrationDate());
-        cart.setUpdateAt(customer.getUser().getRegistrationDate());
-        cart.setCustomer(customer);
-
-        Customer entry = repo.save(customer);
-        cartRepository.save(cart);
-        return entry;
-    }
+//    public Customer save(Customer customer) {
+//        boolean isUpdatingUser = (customer.getId() != null);
+//        if (isUpdatingUser) {
+//            Customer exitingUser = repo.findById(customer.getId()).get();
+//            if (customer.getUser().getPassword().isEmpty()) {
+//                customer.getUser().setPassword(exitingUser.getUser().getPassword());
+//            } else {
+//                encodePassword(customer);
+//            }
+//        } else {
+//            encodePassword(customer);
+//        }
+//        return saveCustomerAndCart(customer);
+//    }
+//
+//    private Customer saveCustomerAndCart(Customer customer) {
+//        Cart cart = new Cart();
+//        cart.setActice(true);
+//        cart.setCreateAt(customer.getUser().getRegistrationDate());
+//        cart.setUpdateAt(customer.getUser().getRegistrationDate());
+//        cart.setCustomer(customer);
+//
+//        Customer entry = repo.save(customer);
+//        cartRepository.save(cart);
+//        return entry;
+//    }
 
     private void encodePassword(Customer customer) {
         String encodedPassword = passwordEncoder.encode(customer.getUser().getPassword());
@@ -112,5 +111,15 @@ public class CustomerService {
                 .build();
 
         return customerRepository.save(customer);
+    }
+
+    public Optional<Customer> updatePassword(@Email String email, @NotBlank String newPassword) {
+        Customer customer = customerRepository.findByUserEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+
+        customer.getUser().setPassword(newPassword);
+        encodePassword(customer);
+
+        return Optional.of(customerRepository.save(customer));
     }
 }

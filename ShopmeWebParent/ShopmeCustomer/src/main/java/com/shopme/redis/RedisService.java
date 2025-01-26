@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import static com.shopme.mail.MailService.maskEmail;
+
 @Slf4j
 @Service
 public class RedisService {
@@ -76,7 +78,7 @@ public class RedisService {
         String key = genEmailSentTimestampKey(email);
         String lastTime = (String) redisTemplate.opsForHash().get(key, email);
         if (lastTime == null) {
-            log.warn("No timestamp found for email: {}", email);
+            log.warn("No timestamp found for email: {}", maskEmail(email));
         }
         return lastTime;
     }
@@ -89,7 +91,7 @@ public class RedisService {
         String key = genAuthCodeKey(email);
         String authCode = (String) redisTemplate.opsForHash().get(key, email);
         if (authCode == null) {
-            log.warn("No auth code found for email: {}", email);
+            log.warn("No auth code found for email: {}", maskEmail(email));
         }
         return authCode;
     }
@@ -109,5 +111,19 @@ public class RedisService {
 
     private String genChangePasswordKey(String s) {
         return prefixChangePasswordKey + ":" + s;
+    }
+
+    public String getChangePasswordToken(@Email String email) {
+        String key = genChangePasswordKey(email);
+        String token = (String) redisTemplate.opsForHash().get(key, email);
+        if (token == null) {
+            log.warn("No change password token found for email: {}", maskEmail(email));
+        }
+        return token;
+    }
+
+    public void deleteChangePasswordToken(@Email String email) {
+        String key = genChangePasswordKey(email);
+        redisTemplate.opsForHash().delete(key, email);
     }
 }

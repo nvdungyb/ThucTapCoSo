@@ -60,4 +60,10 @@ public class MailService {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email != null && email.matches(emailRegex);
     }
+
+    public static String maskEmail(String email) {
+        int atIndex = email.indexOf("@");
+        if (atIndex <= 1) return email;
+        return email.charAt(0) + "***" + email.substring(atIndex);
+    }
 }

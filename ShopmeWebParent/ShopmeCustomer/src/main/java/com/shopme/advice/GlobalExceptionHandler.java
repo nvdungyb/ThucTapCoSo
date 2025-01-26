@@ -2,6 +2,8 @@ package com.shopme.advice;
 
 import com.shopme.advice.exception.*;
 import com.shopme.message.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -16,6 +18,9 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     // https://www.baeldung.com/spring-boot-bean-validation for more information.
     @ExceptionHandler
@@ -33,7 +38,7 @@ public class GlobalExceptionHandler {
                         .message("Validation error")
                         .errors(errors)
                         .data(null)
-                        .path("/customers/register")
+                        .path(httpServletRequest.getRequestURI())
                         .build()
         );
     }
@@ -47,7 +52,7 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.BAD_REQUEST.value())
                         .message(ex.getMessage())
                         .errors(Map.of("error", ex.getMessage()))
-                        .path("/customers/register")
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
@@ -62,7 +67,7 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.NOT_FOUND.value())
                         .message(ex.getMessage())
                         .errors(Map.of("errors", ex.getMessage()))
-                        .path("/customers/register")
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
@@ -77,7 +82,7 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .message(ex.getMessage())
                         .errors(Map.of("errors", ex.getMessage()))
-                        .path(null)
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
@@ -92,7 +97,7 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.UNAUTHORIZED.value())
                         .message("Invalid or expired token")
                         .errors(Map.of("errors", ex.getMessage()))
-                        .path(null)
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
@@ -107,7 +112,7 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.TOO_MANY_REQUESTS.value())
                         .message("Too many requests")
                         .errors(Map.of("errors", ex.getMessage()))
-                        .path(null)
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
@@ -122,7 +127,22 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.FAILED_DEPENDENCY.value())
                         .message("Redis failure")
                         .errors(Map.of("errors", ex.getMessage()))
-                        .path(null)
+                        .path(httpServletRequest.getRequestURI())
+                        .data(null)
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(FailedToUpdatePasswordException.class)
+    public ResponseEntity<?> handleFailedToUpdatePasswordException(Exception ex) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.builder()
+                        .timestamp(timestamp)
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .message("Failed to update password")
+                        .errors(Map.of("errors", ex.getMessage()))
+                        .path(httpServletRequest.getRequestURI())
                         .data(null)
                         .build()
                 );
