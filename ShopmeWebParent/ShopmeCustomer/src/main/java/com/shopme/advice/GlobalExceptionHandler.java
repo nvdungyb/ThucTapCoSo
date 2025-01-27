@@ -139,8 +139,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.builder()
                         .timestamp(timestamp)
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .status(HttpStatus.BAD_REQUEST.value())
                         .message("Failed to update password")
+                        .errors(Map.of("errors", ex.getMessage()))
+                        .path(httpServletRequest.getRequestURI())
+                        .data(null)
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<?> handleInvalidCredentialsException(Exception ex) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.builder()
+                        .timestamp(timestamp)
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .message("Invalid credentials")
                         .errors(Map.of("errors", ex.getMessage()))
                         .path(httpServletRequest.getRequestURI())
                         .data(null)

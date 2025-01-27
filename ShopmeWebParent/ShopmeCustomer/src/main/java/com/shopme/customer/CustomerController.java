@@ -1,32 +1,31 @@
 package com.shopme.customer;
 
 import com.shopme.advice.exception.*;
+import com.shopme.authentication.AuthService;
 import com.shopme.common.entity.Customer;
 import com.shopme.mail.MailService;
-import com.shopme.message.dto.request.AuthCodeDto;
-import com.shopme.message.dto.request.CustomerRegisterDto;
+import com.shopme.message.dto.request.*;
 import com.shopme.message.ApiResponse;
-import com.shopme.message.dto.request.EmailCheckDto;
-import com.shopme.message.dto.request.ForgotPasswordDto;
 import com.shopme.message.dto.response.CustomerResponseDto;
-import com.shopme.redis.RedisService;
+import com.shopme.security.CookieUtil;
 import com.shopme.verification.ForgotPasswordService;
 import com.shopme.verification.RegisterVerification;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
+import static com.shopme.mail.MailService.maskEmail;
 
 @RestController
 public class CustomerController {
@@ -35,22 +34,13 @@ public class CustomerController {
     private final ForgotPasswordService forgotPasswordService;
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
-    private final RedisService redisService;
+    private final AuthService authService;
 
-    public CustomerController(CustomerService customerService, RegisterVerification registerVerification, ForgotPasswordService forgotPasswordService, RedisService redisService) {
+    public CustomerController(CustomerService customerService, RegisterVerification registerVerification, ForgotPasswordService forgotPasswordService, AuthService authService) {
         this.customerService = customerService;
         this.registerVerification = registerVerification;
         this.forgotPasswordService = forgotPasswordService;
-        this.redisService = redisService;
-    }
-
-    @PostMapping("/customer/save")
-    public @ResponseBody Customer saveCustomer(@RequestBody Customer customer, RedirectAttributes redirectAttributes) throws IOException {
-
-        Customer savedCustomer = customerService.save(customer);
-
-        redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
-        return savedCustomer;
+        this.authService = authService;
     }
 
     @PostMapping("/customers/register")
@@ -72,7 +62,7 @@ public class CustomerController {
     @PostMapping("/customers/email/verification")
     public ResponseEntity<?> verificationEmail(@RequestBody Map<String, String> requestBody) throws TooManyRequestsException, RedisFailureException {
         String email = requestBody.get("email");
-        logger.info("Email: {}", email);
+        logger.info("Email: {}", maskEmail(email));
         boolean isValidEmail = MailService.isValidEmail(email);
         if (isValidEmail) {
             registerVerification.sendVerificationToken(email);
@@ -109,7 +99,7 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
-                .message("Auth code has been sent to " + forgotPasswordDto.getEmail())
+                .message("Auth code has been sent to " + maskEmail(forgotPasswordDto.getEmail()))
                 .data(null)
                 .path("customers/password/reset")
                 .build());
@@ -143,6 +133,20 @@ public class CustomerController {
                         .build());
     }
 
+    @PostMapping("/customers/password/reset/new")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) throws FailedToUpdatePasswordException {
+        boolean isReset = forgotPasswordService.resetPassword(resetPasswordDto.getResetToken(), resetPasswordDto.getEmail(), resetPasswordDto.getNewPassword());
+
+        return ResponseEntity.status(isReset ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.builder()
+                        .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                        .status(isReset ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                        .message(isReset ? "Password has been reset successfully" : "Failed to reset password")
+                        .data(null)
+                        .path("/customers/password/reset/new")
+                        .build());
+    }
+
     @PostMapping("/customers/email/uniqueness")
     public ResponseEntity<?> checkDuplicateEmail(@Valid @RequestBody EmailCheckDto emailCheckDto) {
         logger.info("EmailCheck: {}", emailCheckDto);
@@ -158,5 +162,34 @@ public class CustomerController {
 
         return isUnique ? ResponseEntity.ok(response)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @PostMapping("/customers/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) throws InvalidCredentialsException {
+        logger.info("Login DTO: {}", loginDto);
+
+        Map<String, String> tokens = authService.authenticateAndGenerateTokens(loginDto.getEmail(), loginDto.getPassword());
+        tokens.entrySet().stream().forEach(entry -> {
+            long tokenValidity = entry.getKey().equals(AuthService.REFRESH_TOKEN_NAME) ? authService.getREFRESH_TOKEN_VALIDITY() : authService.getACCESS_TOKEN_VALIDITY();
+            int maxAge = Math.toIntExact(tokenValidity / 1000);
+            Cookie cookie = CookieUtil.builder()
+                    .name(entry.getKey())
+                    .value(entry.getValue())
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+            response.addCookie(cookie);
+            logger.info("Cookie created for key: {}", entry.getKey());
+        });
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Login successful")
+                .data(maskEmail(loginDto.getEmail()))
+                .path("/customers/login")
+                .build());
     }
 }
