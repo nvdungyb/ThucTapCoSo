@@ -1,4 +1,4 @@
-package com.shopme.verification;
+package com.shopme.mail;
 
 import org.springframework.stereotype.Component;
 

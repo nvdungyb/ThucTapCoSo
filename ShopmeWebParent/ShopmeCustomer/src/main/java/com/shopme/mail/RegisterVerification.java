@@ -1,10 +1,9 @@
-package com.shopme.verification;
+package com.shopme.mail;
 
 import com.shopme.advice.exception.InvalidTokenException;
 import com.shopme.advice.exception.RedisFailureException;
 import com.shopme.advice.exception.TooManyRequestsException;
 import com.shopme.common.entity.User;
-import com.shopme.mail.MailService;
 import com.shopme.redis.RedisService;
 import com.shopme.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ public class RegisterVerification {
 
         String token = tokenGenerator.generateUUIDToken();
         mailService.sendEmailVerification(email, token);
-        redisService.saveToken(email, token);
+        redisService.saveRegisterToken(email, token);
         redisService.saveLastSentTime(email, String.valueOf(System.currentTimeMillis()));
     }
 
