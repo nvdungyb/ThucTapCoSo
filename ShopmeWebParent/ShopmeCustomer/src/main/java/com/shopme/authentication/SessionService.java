@@ -25,7 +25,13 @@ public class SessionService {
      * @param request
      */
     public void initializeSession(@Email String email, String refreshToken, HttpServletRequest request) {
-        String userIp = request.getRemoteAddr();
+        String userIp = request.getHeader("X-Forwarded-For");
+        if (userIp == null || userIp.isEmpty() || "unknown".equalsIgnoreCase(userIp)) {
+            userIp = request.getHeader("X-Real-IP");
+        }
+        if (userIp == null || userIp.isEmpty() || "unknown".equalsIgnoreCase(userIp)) {
+            userIp = request.getRemoteAddr();
+        }
         redisService.saveUserSession(refreshToken, email, userIp);
     }
 }
