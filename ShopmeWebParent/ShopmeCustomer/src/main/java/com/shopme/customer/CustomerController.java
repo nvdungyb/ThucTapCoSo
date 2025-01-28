@@ -2,6 +2,7 @@ package com.shopme.customer;
 
 import com.shopme.advice.exception.*;
 import com.shopme.authentication.AuthService;
+import com.shopme.authentication.SessionService;
 import com.shopme.common.entity.Customer;
 import com.shopme.mail.MailService;
 import com.shopme.message.dto.request.*;
@@ -11,7 +12,7 @@ import com.shopme.security.CookieUtil;
 import com.shopme.verification.ForgotPasswordService;
 import com.shopme.verification.RegisterVerification;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,12 +35,14 @@ public class CustomerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final AuthService authService;
+    private final SessionService sessionService;
 
-    public CustomerController(CustomerService customerService, RegisterVerification registerVerification, ForgotPasswordService forgotPasswordService, AuthService authService) {
+    public CustomerController(CustomerService customerService, RegisterVerification registerVerification, ForgotPasswordService forgotPasswordService, AuthService authService, SessionService sessionService) {
         this.customerService = customerService;
         this.registerVerification = registerVerification;
         this.forgotPasswordService = forgotPasswordService;
         this.authService = authService;
+        this.sessionService = sessionService;
     }
 
     @PostMapping("/customers/register")
@@ -165,24 +167,19 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response) throws InvalidCredentialsException {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response, HttpServletRequest request) throws InvalidCredentialsException {
         logger.info("Login DTO: {}", loginDto);
 
         Map<String, String> tokens = authService.authenticateAndGenerateTokens(loginDto.getEmail(), loginDto.getPassword());
         tokens.entrySet().stream().forEach(entry -> {
             long tokenValidity = entry.getKey().equals(AuthService.REFRESH_TOKEN_NAME) ? authService.getREFRESH_TOKEN_VALIDITY() : authService.getACCESS_TOKEN_VALIDITY();
             int maxAge = Math.toIntExact(tokenValidity / 1000);
-            Cookie cookie = CookieUtil.builder()
-                    .name(entry.getKey())
-                    .value(entry.getValue())
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(maxAge)
-                    .build();
+            Cookie cookie = CookieUtil.createCookie(entry.getKey(), entry.getValue(), tokenValidity);
             response.addCookie(cookie);
             logger.info("Cookie created for key: {}", entry.getKey());
         });
+
+        sessionService.initializeSession(loginDto.getEmail(), tokens.get(AuthService.REFRESH_TOKEN_NAME), request);
 
         return ResponseEntity.ok(ApiResponse.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))

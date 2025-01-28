@@ -134,4 +134,19 @@ public class RedisService {
         String key = genChangePasswordKey(email);
         redisTemplate.opsForHash().delete(key, email);
     }
+
+    public void saveUserSession(String refreshToken, @Email String email, String userIp) {
+        Map<String, String> sessionData = new HashMap<>();
+        sessionData.put("email", email);
+        sessionData.put("ip", userIp);
+
+        String sessionKey = genSessionKey(refreshToken);
+        redisTemplate.opsForHash().putAll(sessionKey, sessionData);
+
+        redisTemplate.expire(sessionKey, REFRESH_TOKEN_VALIDITY, TimeUnit.SECONDS);
+    }
+
+    private String genSessionKey(String refreshToken) {
+        return prefixSessionKey + refreshToken;
+    }
 }

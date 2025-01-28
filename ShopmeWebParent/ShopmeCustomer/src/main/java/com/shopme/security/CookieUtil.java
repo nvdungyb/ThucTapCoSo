@@ -67,4 +67,16 @@ public class CookieUtil {
         }
         return cookie;
     }
+
+    public static Cookie createCookie(String name, String value, long validity) {
+        int maxAge = Math.toIntExact(validity / 1000);
+        return CookieUtil.builder()
+                .name(name)
+                .value(value)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+    }
 }

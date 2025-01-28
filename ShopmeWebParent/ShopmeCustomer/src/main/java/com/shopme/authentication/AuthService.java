@@ -44,7 +44,7 @@ public class AuthService {
 
     private Map<String, String> generateJwtTokens(String email) {
         String accessToken = jwtUtils.generateAccessToken(email, ACCESS_TOKEN_VALIDITY);
-        String refreshToken = jwtUtils.generateRefreshToken(REFRESH_TOKEN_VALIDITY);
+        String refreshToken = jwtUtils.generateRefreshToken(email, REFRESH_TOKEN_VALIDITY);
 
         return Map.of(ACCESS_TOKEN_NAME, accessToken, REFRESH_TOKEN_NAME, refreshToken);
     }

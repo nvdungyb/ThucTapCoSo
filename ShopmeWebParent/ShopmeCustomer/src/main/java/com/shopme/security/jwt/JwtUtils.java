@@ -63,13 +63,13 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateRefreshToken(long refreshTokenValidity) {
+    public String generateRefreshToken(String email, long refreshTokenValidity) {
         return Jwts.builder()
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
                 .signWith(SignatureAlgorithm.HS256, getSignKey(refreshTokenSecret))
                 .compact();
-
     }
 
     private Key getSignKey(String tokenSecret) {
