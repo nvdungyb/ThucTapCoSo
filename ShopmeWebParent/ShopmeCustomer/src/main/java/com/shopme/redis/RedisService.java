@@ -7,7 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Email;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -17,20 +18,27 @@ import static com.shopme.mail.MailService.maskEmail;
 @Service
 public class RedisService {
     @Value("${redis_key_ttl}")
-    private long ttl;
+    private long baseTtl;
+
+    @Value("${accessTokenValidity}")
+    private long ACCESS_TOKEN_VALIDITY;
+
+    @Value("${refreshTokenValidity}")
+    private long REFRESH_TOKEN_VALIDITY;
 
     private final RedisTemplate<String, String> redisTemplate;
-    private static final String prefixValidationKey = "validation";
-    private static final String prefixTimestampKey = "timestamp";
-    private static final String prefixAuthCodeKey = "auth_code";
-    private static final String prefixChangePasswordKey = "change_password";
+    private static final String prefixValidationKey = "validation:";
+    private static final String prefixTimestampKey = "timestamp:";
+    private static final String prefixAuthCodeKey = "auth_code:";
+    private static final String prefixChangePasswordKey = "change_password:";
+    private static final String prefixSessionKey = "session:";
 
     public RedisService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    public void saveToken(String email, String token) throws RedisFailureException {
-        saveToHSet(token, email, this::genValidationKey);
+    public void saveRegisterToken(String email, String token) throws RedisFailureException {
+        saveToHSet(token, token, email, baseTtl, this::genValidationKey);
     }
 
     public String getEmailByToken(String token) {
@@ -43,7 +51,7 @@ public class RedisService {
     }
 
     private String genValidationKey(String token) {
-        return prefixValidationKey + ":" + token;
+        return prefixValidationKey + token;
     }
 
     public void deleteToken(String token) {
@@ -54,8 +62,8 @@ public class RedisService {
     // todo: we need customize the ttl for each key.
     // todo: Token should be encrypted.
     // todo: Performance should use redis pipeline.
-    private void saveToHSet(String hashKey, Object value, Function<String, String> genKeyFunc) throws RedisFailureException {
-        String key = genKeyFunc.apply(hashKey);
+    private void saveToHSet(String suffixKey, String hashKey, String value, long ttl, Function<String, String> genKeyFunc) throws RedisFailureException {
+        String key = genKeyFunc.apply(suffixKey);
         try {
             redisTemplate.opsForHash().put(key, hashKey, value);
             redisTemplate.expire(key, ttl, TimeUnit.MILLISECONDS);
@@ -66,12 +74,12 @@ public class RedisService {
         }
     }
 
-    public void saveLastSentTime(String email, String timestamp) throws RedisFailureException {
-        saveToHSet(email, timestamp, this::genEmailSentTimestampKey);
+    public void saveLastSentTime(String email, String timestamp) {
+        redisTemplate.opsForHash().put(genEmailSentTimestampKey(email), email, timestamp);
     }
 
     private String genEmailSentTimestampKey(String email) {
-        return prefixTimestampKey + ":" + email;
+        return prefixTimestampKey + email;
     }
 
     public String getLastSentTime(String email) {
@@ -84,7 +92,7 @@ public class RedisService {
     }
 
     public void saveAuthCode(String email, String authCode) throws RedisFailureException {
-        saveToHSet(email, authCode, this::genAuthCodeKey);
+        saveToHSet(email, email, authCode, baseTtl, this::genAuthCodeKey);
     }
 
     public String getAuthCode(String email) {
@@ -97,7 +105,7 @@ public class RedisService {
     }
 
     private String genAuthCodeKey(String s) {
-        return prefixAuthCodeKey + ":" + s;
+        return prefixAuthCodeKey + s;
     }
 
     public void deleteAuthCode(String email) {
@@ -106,11 +114,11 @@ public class RedisService {
     }
 
     public void saveChangePasswordToken(@Email String email, String value) throws RedisFailureException {
-        saveToHSet(email, value, this::genChangePasswordKey);
+        saveToHSet(email, email, value, baseTtl, this::genChangePasswordKey);
     }
 
     private String genChangePasswordKey(String s) {
-        return prefixChangePasswordKey + ":" + s;
+        return prefixChangePasswordKey + s;
     }
 
     public String getChangePasswordToken(@Email String email) {
