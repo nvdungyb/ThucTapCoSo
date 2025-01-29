@@ -4,10 +4,7 @@ import com.shopme.advice.exception.*;
 import com.shopme.customer.CustomerController;
 import com.shopme.mail.MailService;
 import com.shopme.message.ApiResponse;
-import com.shopme.message.dto.request.AuthCodeDto;
-import com.shopme.message.dto.request.ForgotPasswordDto;
-import com.shopme.message.dto.request.LoginDto;
-import com.shopme.message.dto.request.ResetPasswordDto;
+import com.shopme.message.dto.request.*;
 import com.shopme.security.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import static com.shopme.mail.MailService.maskEmail;
@@ -61,5 +59,21 @@ public class AuthController {
                 .data(maskEmail(loginDto.getEmail()))
                 .path("/customers/login")
                 .build());
+    }
+
+    @PostMapping("/customers/logout")
+    public ResponseEntity<?> logout(@Valid @RequestBody LogoutDto logoutDto, HttpServletResponse response) {
+        logger.info("Logout DTO: {}", logoutDto);
+
+        boolean isInvalidated = sessionService.invalidateSession(logoutDto, response);
+
+        return ResponseEntity.status(isInvalidated ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.builder()
+                        .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                        .status(isInvalidated ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                        .message(isInvalidated ? "Logout successful" : "Something went wrong")
+                        .data(null)
+                        .path("/customers/logout")
+                        .build());
     }
 }

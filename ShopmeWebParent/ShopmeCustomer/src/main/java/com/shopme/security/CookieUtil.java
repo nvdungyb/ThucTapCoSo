@@ -1,6 +1,7 @@
 package com.shopme.security;
 
 import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 
 public class CookieUtil {
     private String name;
@@ -78,5 +79,9 @@ public class CookieUtil {
                 .path("/")
                 .maxAge(maxAge)
                 .build();
+    }
+
+    public static Cookie deleteCookie(String tokenName, String token) {
+        return CookieUtil.createCookie(tokenName, token, 0);
     }
 }

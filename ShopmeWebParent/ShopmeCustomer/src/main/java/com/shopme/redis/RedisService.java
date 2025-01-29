@@ -143,10 +143,15 @@ public class RedisService {
         String sessionKey = genSessionKey(refreshToken);
         redisTemplate.opsForHash().putAll(sessionKey, sessionData);
 
-        redisTemplate.expire(sessionKey, REFRESH_TOKEN_VALIDITY, TimeUnit.SECONDS);
+        redisTemplate.expire(sessionKey, REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
     }
 
     private String genSessionKey(String refreshToken) {
         return prefixSessionKey + refreshToken;
+    }
+
+    public void deleteUserSession(String refreshToken) {
+        String sessionKey = genSessionKey(refreshToken);
+        redisTemplate.delete(sessionKey);
     }
 }
