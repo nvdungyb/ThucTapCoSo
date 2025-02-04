@@ -7,8 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Email;
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.constraints.NotBlank;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -31,7 +31,7 @@ public class RedisService {
     private static final String prefixTimestampKey = "timestamp:";
     private static final String prefixAuthCodeKey = "auth_code:";
     private static final String prefixChangePasswordKey = "change_password:";
-    private static final String prefixSessionKey = "session:";
+    private static final String prefixInvalid = "invalid:";
 
     public RedisService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -135,23 +135,22 @@ public class RedisService {
         redisTemplate.opsForHash().delete(key, email);
     }
 
-    public void saveUserSession(String refreshToken, @Email String email, String userIp) {
-        Map<String, String> sessionData = new HashMap<>();
-        sessionData.put("email", email);
-        sessionData.put("ip", userIp);
-
-        String sessionKey = genSessionKey(refreshToken);
-        redisTemplate.opsForHash().putAll(sessionKey, sessionData);
-
-        redisTemplate.expire(sessionKey, REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
+    public boolean saveInvalidRefreshToken(@NotBlank String refreshToken) {
+        String invalidKey = genInvalidKey(refreshToken);
+        try {
+            redisTemplate.opsForValue().set(invalidKey, refreshToken, REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to save invalid refresh token: {}", refreshToken);
+            return false;
+        }
     }
 
-    private String genSessionKey(String refreshToken) {
-        return prefixSessionKey + refreshToken;
+    private String genInvalidKey(@NotBlank String refreshToken) {
+        return prefixInvalid + refreshToken;
     }
 
-    public void deleteUserSession(String refreshToken) {
-        String sessionKey = genSessionKey(refreshToken);
-        redisTemplate.delete(sessionKey);
+    public Optional<String> getInvalidRefreshToken(String refreshToken) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(genInvalidKey(refreshToken)));
     }
 }

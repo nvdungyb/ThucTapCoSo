@@ -50,7 +50,7 @@ public class JwtUtils {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey(tokenSecret))
                 .build()
-                .parseClaimsJwt(jwtToken)
+                .parseClaimsJws(jwtToken)
                 .getBody();
     }
 
@@ -63,9 +63,9 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateRefreshToken(String email, long refreshTokenValidity) {
+    public String generateRefreshToken(String userId, long refreshTokenValidity) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
                 .signWith(SignatureAlgorithm.HS256, getSignKey(refreshTokenSecret))
@@ -75,5 +75,13 @@ public class JwtUtils {
     private Key getSignKey(String tokenSecret) {
         byte[] secretBytes = Decoders.BASE64.decode(tokenSecret);
         return Keys.hmacShaKeyFor(secretBytes);
+    }
+
+    public boolean isValidRefreshToken(String refreshToken) {
+        return validateJwtToken(refreshToken, refreshTokenSecret);
+    }
+
+    public Long getCustomerIdFromRefreshToken(String refreshToken) {
+        return Long.parseLong(extractClaim(refreshToken, refreshTokenSecret, Claims::getSubject));
     }
 }

@@ -1,40 +1,31 @@
 package com.shopme.authentication;
 
 import com.shopme.advice.exception.*;
-import com.shopme.customer.CustomerController;
-import com.shopme.mail.MailService;
 import com.shopme.message.ApiResponse;
 import com.shopme.message.dto.request.*;
-import com.shopme.security.CookieUtil;
-import jakarta.servlet.http.Cookie;
+import com.shopme.security.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
-
-import static com.shopme.mail.MailService.maskEmail;
 
 @RestController
 public class AuthController {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
-    private final SessionService sessionService;
+    private final JwtUtils jwtUtils;
 
-    public AuthController(AuthService authService, SessionService sessionService) {
+    public AuthController(AuthService authService, JwtUtils jwtUtils) {
         this.authService = authService;
-        this.sessionService = sessionService;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/customers/login")
@@ -42,38 +33,44 @@ public class AuthController {
         logger.info("Login DTO: {}", loginDto);
 
         Map<String, String> tokens = authService.authenticateAndGenerateTokens(loginDto.getEmail(), loginDto.getPassword());
-        tokens.entrySet().stream().forEach(entry -> {
-            long tokenValidity = entry.getKey().equals(AuthService.REFRESH_TOKEN_NAME) ? authService.getREFRESH_TOKEN_VALIDITY() : authService.getACCESS_TOKEN_VALIDITY();
-            int maxAge = Math.toIntExact(tokenValidity / 1000);
-            Cookie cookie = CookieUtil.createCookie(entry.getKey(), entry.getValue(), tokenValidity);
-            response.addCookie(cookie);
-            logger.info("Cookie created for key: {}", entry.getKey());
-        });
-
-        sessionService.initializeSession(loginDto.getEmail(), tokens.get(AuthService.REFRESH_TOKEN_NAME), request);
 
         return ResponseEntity.ok(ApiResponse.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Login successful")
-                .data(maskEmail(loginDto.getEmail()))
+                .data(tokens)
                 .path("/customers/login")
                 .build());
     }
 
     @PostMapping("/customers/logout")
-    public ResponseEntity<?> logout(@Valid @RequestBody LogoutDto logoutDto, HttpServletResponse response) {
+    public ResponseEntity<?> logout(@Valid @RequestBody LogoutDto logoutDto) {
         logger.info("Logout DTO: {}", logoutDto);
 
-        boolean isInvalidated = sessionService.invalidateSession(logoutDto, response);
+        boolean isInvalidated = authService.invalidateRefreshToken(logoutDto.getRefreshToken());
 
         return ResponseEntity.status(isInvalidated ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.builder()
                         .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                         .status(isInvalidated ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
-                        .message(isInvalidated ? "Logout successful" : "Something went wrong")
+                        .message(isInvalidated ? "Logout successful" : "Can not save this refresh token in redis")
                         .data(null)
                         .path("/customers/logout")
                         .build());
+    }
+
+    @PostMapping("/customers/access-token")
+    public ResponseEntity<?> getAccessToken(@Valid @RequestBody RefreshTokenDto refreshTokenDto, HttpServletRequest request, HttpServletResponse response) throws InvalidCredentialsException {
+        logger.info("Refresh token DTO: {}", refreshTokenDto);
+
+        Map<String, String> tokens = authService.generateTokens(refreshTokenDto);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Access token generated successfully")
+                .data(tokens)
+                .path("/customers/access-token")
+                .build());
     }
 }
