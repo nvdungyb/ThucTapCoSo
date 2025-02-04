@@ -1,4 +1,4 @@
-package com.shopme.role;
+package com.shopme.Reposistory;
 
 import com.shopme.common.entity.Role;
 import com.shopme.common.utils.ERole;
