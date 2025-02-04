@@ -1,5 +1,6 @@
-package com.shopme.product;
+package com.shopme.service;
 
+import com.shopme.Reposistory.ProductRepository;
 import com.shopme.common.shop.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Page<Product> listByCategory(int pageNum, Integer categoryId) {
+    public Page<Product> listByCategory(int pageNum, Long categoryId) {
         String categoryIdMatch = "-" + String.valueOf(categoryId) + "-";
         Pageable pageable = PageRequest.of(pageNum - 1, PRODUCTS_PER_PAGE);
         return productRepository.listByCategory(categoryId, categoryIdMatch, pageable);

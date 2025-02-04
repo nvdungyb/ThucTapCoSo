@@ -1,6 +1,7 @@
-package com.shopme.authentication;
+package com.shopme.Controller;
 
 import com.shopme.advice.exception.*;
+import com.shopme.service.AuthService;
 import com.shopme.message.ApiResponse;
 import com.shopme.message.dto.request.*;
 import com.shopme.security.jwt.JwtUtils;

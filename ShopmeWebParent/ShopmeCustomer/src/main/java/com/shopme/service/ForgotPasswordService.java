@@ -1,12 +1,8 @@
-package com.shopme.verification;
+package com.shopme.service;
 
 import com.shopme.advice.exception.FailedToUpdatePasswordException;
-import com.shopme.advice.exception.InvalidTokenException;
 import com.shopme.advice.exception.RedisFailureException;
-import com.shopme.common.entity.User;
-import com.shopme.customer.CustomerService;
 import com.shopme.mail.MailService;
-import com.shopme.redis.RedisService;
 import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

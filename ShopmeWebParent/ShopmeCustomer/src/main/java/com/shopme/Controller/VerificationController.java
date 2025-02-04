@@ -1,8 +1,8 @@
-package com.shopme.verification;
+package com.shopme.Controller;
 
+import com.shopme.service.ForgotPasswordService;
 import com.shopme.advice.exception.FailedToUpdatePasswordException;
 import com.shopme.advice.exception.RedisFailureException;
-import com.shopme.customer.CustomerController;
 import com.shopme.mail.RegisterVerification;
 import com.shopme.message.ApiResponse;
 import com.shopme.message.dto.request.AuthCodeDto;
@@ -11,13 +11,10 @@ import com.shopme.message.dto.request.ResetPasswordDto;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -56,21 +53,12 @@ public class VerificationController {
             resetPasswordToken = forgotPasswordService.generateAndSaveResetToken(authCodeDto.getEmail());
         }
 
-        ResponseCookie cookie = ResponseCookie.from("resetToken", isValid ? resetPasswordToken : "")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict") // Ngăn chặn CSRF
-                .path("/")
-                .maxAge(isValid ? Duration.ofMinutes(15) : Duration.ofSeconds(0))
-                .build();
-
         return ResponseEntity.status(isValid ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(ApiResponse.builder()
                         .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                         .status(isValid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
                         .message(isValid ? "Auth code is valid" : "Invalid email address or auth code")
-                        .data(null)
+                        .data(resetPasswordToken)
                         .path("/customers/password/reset/verify")
                         .build());
     }

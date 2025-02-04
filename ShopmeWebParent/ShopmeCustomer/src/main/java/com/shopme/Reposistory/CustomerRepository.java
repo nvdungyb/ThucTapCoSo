@@ -1,4 +1,4 @@
-package com.shopme.customer;
+package com.shopme.Reposistory;
 
 import com.shopme.common.entity.Customer;
 import org.springframework.data.repository.CrudRepository;

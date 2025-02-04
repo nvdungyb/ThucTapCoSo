@@ -1,4 +1,4 @@
-package com.shopme.redis;
+package com.shopme.service;
 
 import com.shopme.advice.exception.RedisFailureException;
 import lombok.extern.slf4j.Slf4j;
@@ -74,8 +74,8 @@ public class RedisService {
         }
     }
 
-    public void saveLastSentTime(String email, String timestamp) {
-        redisTemplate.opsForHash().put(genEmailSentTimestampKey(email), email, timestamp);
+    public void saveLastSentTime(String email, String timestamp) throws RedisFailureException {
+        saveToHSet(email, email, timestamp, baseTtl, this::genEmailSentTimestampKey);
     }
 
     private String genEmailSentTimestampKey(String email) {

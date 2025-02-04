@@ -31,7 +31,7 @@ public class CustomerDetailsImpl implements UserDetails {
 
     public static CustomerDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getERole().name()))
                 .collect(Collectors.toUnmodifiableList());
 
         String username = user.getFirstName() + " " + user.getLastName();

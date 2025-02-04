@@ -1,10 +1,9 @@
-package com.shopme.authentication;
+package com.shopme.service;
 
 import com.shopme.advice.exception.InvalidCredentialsException;
 import com.shopme.common.entity.Customer;
-import com.shopme.customer.CustomerRepository;
+import com.shopme.Reposistory.CustomerRepository;
 import com.shopme.message.dto.request.RefreshTokenDto;
-import com.shopme.redis.RedisService;
 import com.shopme.security.jwt.JwtUtils;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

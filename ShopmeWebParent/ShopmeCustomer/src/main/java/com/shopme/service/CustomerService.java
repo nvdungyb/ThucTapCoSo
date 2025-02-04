@@ -1,5 +1,6 @@
-package com.shopme.customer;
+package com.shopme.service;
 
+import com.shopme.Reposistory.CustomerRepository;
 import com.shopme.advice.exception.EmailAlreadyExistsException;
 import com.shopme.advice.exception.RoleNotFoundException;
 import com.shopme.common.entity.Customer;
@@ -8,8 +9,7 @@ import com.shopme.common.entity.User;
 import com.shopme.common.utils.ERole;
 import com.shopme.message.dto.request.CustomerRegisterDto;
 import com.shopme.role.RoleRepository;
-import com.shopme.shoppingcart.CartRepository;
-import com.shopme.user.UserRepository;
+import com.shopme.Reposistory.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 public class CustomerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private CartRepository cartRepository;
     @Autowired
     private CustomerRepository customerRepository;
 
