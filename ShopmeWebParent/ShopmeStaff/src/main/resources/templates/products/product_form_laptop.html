@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment :: page_head('Brand - Shopme Admin')">
+    <link rel="stylesheet" th:href="@{/richtext/jquery.richtext.min.js}">
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+</head>
+
+
+<body class="container-fluid">
+<div th:replace="navigation :: menu">
+</div>
+
+<div>
+    <h2>Manage Product | [[${pageTitle}]]</h2>
+</div>
+
+<form th:action="@{/laptop/save}" method="post"
+      th:object="${product}" enctype="multipart/form-data">
+    <div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#overview" role="tab">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#description" role="tab">Description</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#images" role="tab">Images</a>
+            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" data-toggle="tab" href="#details" role="tab">Details</a>-->
+<!--            </li>-->
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#shipping" role="tab">Shipping</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active p-3" id="overview" role="tabpanel">
+                <div th:replace="products/product_laptop_overview :: content"></div>
+            </div>
+            <div class="tab-pane" id="description" role="tabpanel">
+                <div th:replace="products/product_description :: content"></div>
+            </div>
+            <div class="tab-pane" id="images" role="tabpanel">
+                <div th:replace="products/product_images :: content"></div>
+            </div>
+<!--            <div class="tab-pane" id="details" role="tabpanel">-->
+<!--            </div>-->
+            <div class="tab-pane" id="shipping" role="tabpanel">
+                <div th:replace="products/product_shipping :: content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <input type="submit" value="Save" class="btn btn-primary"/>
+        <input type="button" value="Cancel" class="btn btn-secondary" id="buttonCanel"/>
+    </div>
+
+</form>
+
+<div class="modal fade text-center" id="modalDialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle">Warning</h4>
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+
+            <div class="modal-body">
+                <span id="modalBody"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragment :: footer">
+</div>
+
+<script type="text/javascript">
+    brandModuleURL = "[[@{/brands}]]";
+
+    dropdownBrands = $("#brand");
+    dropdownCategories = $("#category");
+
+    $(document).ready(function () {
+        dropdownBrands.change(function () {
+            dropdownCategories.empty();
+            getCategories();
+        })
+        getCategories();
+    })
+
+    function getCategories() {
+        brandId = dropdownBrands.val();
+        url = brandModuleURL + "/" + brandId + "/categories";
+        $.get(url, function (responseJson) {
+            $.each(responseJson, function (index, category) {
+                $("<option>").val(category.id).text(category.name).appendTo(dropdownCategories);
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        $("#buttonCanel").on("click", function () {
+            window.location = "[[@{/products}]]";
+        });
+
+
+        $("#fileImage").change(function () {
+            fileSize = this.files[0].size;
+
+            if (fileSize > 1048576 * 5) {
+                this.setCustomValidity("You must choose an image less than 5MB!");
+                this.reportValidity();
+            } else {
+                this.setCustomValidity("")
+                showImageThumbnail(this);
+            }
+        });
+    });
+
+    function showImageThumbnail(fileInput) {
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $("#thumbnail").attr("src", e.target.result);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+</script>
+</body>
+
+</html>

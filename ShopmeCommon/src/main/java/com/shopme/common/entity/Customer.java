@@ -1,46 +1,41 @@
 package com.shopme.common.entity;
 
+import com.shopme.common.shop.Cart;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Entity
-@Data
+@Getter
+@Builder
 @Table(name = "customers")
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(callSuper = true, exclude = "cart")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String email;
-    private String password;
+    @OneToOne(cascade = ALL, fetch = FetchType.LAZY)
+    private User user;
 
-    @Column(name = "first_name", length = 45)
-    private String firstName;
+    @Column(name = "loyalty_points", nullable = false)
+    private int loyaltyPoints;
 
-    @Column(name = "last_name", length = 45)
-    private String lastName;
+    @Column(name = "total_spent", nullable = false)
+    private double totalSpent;
 
-    @Column(name = "phone_number", length = 15)
-    private String phoneNumber;
-
-    @Column(name = "address_line1", length = 64)
-    private String addressLine1;
-
-    @Column(name = "address_line2", length = 64)
-    private String addressLine2;
-
-    @Column(length = 45)
-    private String city;
-
-    private boolean enabled;
-
-    public Customer(int id) {
-        this.id = id;
+    public Customer(long customerId) {
+        this.id = customerId;
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return this.user.getFirstName() + " " + this.user.getLastName();
     }
+
+    @OneToOne(mappedBy = "customer", cascade = ALL, fetch = FetchType.LAZY)
+    private Cart cart;
 }
