@@ -1,9 +1,8 @@
 package com.shopme.common.shop;
 
-import com.shopme.common.utils.EGender;
+import com.shopme.common.enums.EGender;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;

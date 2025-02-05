@@ -1,6 +1,8 @@
 package com.shopme.common.shop;
 
 import com.shopme.common.entity.Seller;
+import com.shopme.common.enums.ECurrency;
+import com.shopme.common.enums.ProductType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,7 +51,8 @@ public class Product {
     private float price;
 
     @Column(nullable = false)
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private ECurrency currency;
 
     @Column(nullable = false)
     private double rating;
@@ -60,16 +63,19 @@ public class Product {
     @Column(name = "main_image", length = 256, nullable = false)
     private String mainImage;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
     private Set<ProductImage> images = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private ProductType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)

@@ -1,9 +1,9 @@
 package com.shopme.common.shop;
 
 import com.shopme.common.entity.Customer;
-import com.shopme.common.utils.EDeliveryStatus;
-import com.shopme.common.utils.EOrderStatus;
-import com.shopme.common.utils.EPaymentMethod;
+import com.shopme.common.enums.EDeliveryStatus;
+import com.shopme.common.enums.EOrderStatus;
+import com.shopme.common.enums.EPaymentMethod;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
