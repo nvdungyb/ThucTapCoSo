@@ -1,11 +1,11 @@
-package com.security.security.mail;
+package com.dzungyb.security.mail;
 
-import com.security.security.advice.exception.InvalidTokenException;
-import com.security.security.advice.exception.RedisFailureException;
-import com.security.security.advice.exception.TooManyRequestsException;
-import com.security.security.reposistory.UserRepository;
+import com.dzungyb.security.advice.exception.InvalidTokenException;
+import com.dzungyb.security.advice.exception.RedisFailureException;
+import com.dzungyb.security.advice.exception.TooManyRequestsException;
+import com.dzungyb.security.reposistory.UserRepository;
 import com.shopme.common.entity.User;
-import com.security.security.service.RedisService;
+import com.dzungyb.security.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

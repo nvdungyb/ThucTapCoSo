@@ -1,8 +1,8 @@
-package com.security.security.service;
+package com.dzungyb.security.service;
 
 import com.shopme.common.entity.User;
-import com.security.security.reposistory.UserRepository;
-import com.security.security.security.UserDetailsImpl;
+import com.dzungyb.security.reposistory.UserRepository;
+import com.dzungyb.security.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

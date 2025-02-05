@@ -1,7 +1,7 @@
-package com.security.security.service;
+package com.dzungyb.security.service;
 
-import com.security.security.advice.exception.RedisFailureException;
-import com.security.security.mail.MailService;
+import com.dzungyb.security.advice.exception.RedisFailureException;
+import com.dzungyb.security.mail.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;

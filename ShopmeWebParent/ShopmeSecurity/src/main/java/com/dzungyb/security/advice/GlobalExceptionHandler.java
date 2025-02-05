@@ -1,8 +1,7 @@
-package com.security.security.advice;
+package com.dzungyb.security.advice;
 
-import com.security.advice.exception.*;
-import com.security.security.advice.exception.*;
-import com.security.security.dto.ApiResponse;
+import com.dzungyb.security.advice.exception.*;
+import com.shopme.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

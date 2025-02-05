@@ -1,8 +1,8 @@
-package com.shopme.utils;
+package com.dzungyb.security.security;
 
-import com.security.security.jwt.AuthJwtTokenFilter;
-import com.security.security.jwt.JwtUtils;
-import com.security.service.UserDetailsServiceImpl;
+import com.dzungyb.security.security.jwt.AuthJwtTokenFilter;
+import com.dzungyb.security.security.jwt.JwtUtils;
+import com.dzungyb.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.security.security.mail;
+package com.dzungyb.security.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

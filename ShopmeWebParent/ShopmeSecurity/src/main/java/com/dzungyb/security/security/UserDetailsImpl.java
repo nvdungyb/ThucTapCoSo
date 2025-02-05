@@ -1,4 +1,4 @@
-package com.security.security.security;
+package com.dzungyb.security.security;
 
 import com.shopme.common.entity.User;
 import lombok.Getter;

@@ -1,9 +1,9 @@
-package com.security.security.mail;
+package com.dzungyb.security.mail;
 
-import com.security.security.advice.exception.InvalidTokenException;
-import com.security.security.advice.exception.RedisFailureException;
-import com.security.security.advice.exception.TooManyRequestsException;
-import com.security.security.dto.ApiResponse;
+import com.dzungyb.security.advice.exception.InvalidTokenException;
+import com.dzungyb.security.advice.exception.RedisFailureException;
+import com.dzungyb.security.advice.exception.TooManyRequestsException;
+import com.shopme.common.dto.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static com.security.security.mail.MailService.maskEmail;
+import static com.dzungyb.security.mail.MailService.maskEmail;
 
 @RestController
 public class MailController {

@@ -1,8 +1,8 @@
-package com.security.security.service;
+package com.dzungyb.security.service;
 
-import com.security.security.advice.exception.FailedToUpdatePasswordException;
-import com.security.security.advice.exception.RedisFailureException;
-import com.security.security.mail.MailService;
+import com.dzungyb.security.advice.exception.FailedToUpdatePasswordException;
+import com.dzungyb.security.advice.exception.RedisFailureException;
+import com.dzungyb.security.mail.MailService;
 import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

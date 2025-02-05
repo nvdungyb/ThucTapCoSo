@@ -1,13 +1,13 @@
-package com.security.security.controller;
+package com.dzungyb.security.controller;
 
-import com.security.security.dto.ApiResponse;
-import com.security.security.dto.request.AuthCodeDto;
-import com.security.security.dto.request.ForgotPasswordDto;
-import com.security.security.dto.request.ResetPasswordDto;
-import com.security.security.service.ForgotPasswordService;
-import com.security.security.advice.exception.FailedToUpdatePasswordException;
-import com.security.security.advice.exception.RedisFailureException;
-import com.security.security.mail.RegisterVerification;
+import com.shopme.common.dto.ApiResponse;
+import com.dzungyb.security.dto.request.AuthCodeDto;
+import com.dzungyb.security.dto.request.ForgotPasswordDto;
+import com.dzungyb.security.dto.request.ResetPasswordDto;
+import com.dzungyb.security.service.ForgotPasswordService;
+import com.dzungyb.security.advice.exception.FailedToUpdatePasswordException;
+import com.dzungyb.security.advice.exception.RedisFailureException;
+import com.dzungyb.security.mail.RegisterVerification;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.security.security.mail.MailService.maskEmail;
+import static com.dzungyb.security.mail.MailService.maskEmail;
 
 @RestController
 public class VerificationController {

@@ -1,7 +1,7 @@
 package com.shopme.message.dto.response;
 
 import com.shopme.common.entity.Customer;
-import com.shopme.common.utils.ERole;
+import com.shopme.common.enums.ERole;
 import lombok.Data;
 
 import java.util.Set;

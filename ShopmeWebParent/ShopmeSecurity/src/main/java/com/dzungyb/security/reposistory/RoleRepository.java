@@ -1,7 +1,7 @@
-package com.security.security.reposistory;
+package com.dzungyb.security.reposistory;
 
 import com.shopme.common.entity.Role;
-import com.shopme.common.utils.ERole;
+import com.shopme.common.enums.ERole;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

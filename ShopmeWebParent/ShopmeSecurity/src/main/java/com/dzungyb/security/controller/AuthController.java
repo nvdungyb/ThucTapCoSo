@@ -1,12 +1,12 @@
-package com.security.security.controller;
+package com.dzungyb.security.controller;
 
-import com.security.security.advice.exception.InvalidCredentialsException;
-import com.security.security.dto.ApiResponse;
-import com.security.security.dto.request.LoginDto;
-import com.security.security.dto.request.LogoutDto;
-import com.security.security.dto.request.RefreshTokenDto;
-import com.security.security.service.AuthService;
-import com.security.security.security.jwt.JwtUtils;
+import com.dzungyb.security.advice.exception.InvalidCredentialsException;
+import com.shopme.common.dto.ApiResponse;
+import com.dzungyb.security.dto.request.LoginDto;
+import com.dzungyb.security.dto.request.LogoutDto;
+import com.dzungyb.security.dto.request.RefreshTokenDto;
+import com.dzungyb.security.service.AuthService;
+import com.dzungyb.security.security.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

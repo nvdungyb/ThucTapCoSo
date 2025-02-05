@@ -1,6 +1,6 @@
-package com.security.security.security.jwt;
+package com.dzungyb.security.security.jwt;
 
-import com.security.security.service.UserDetailsServiceImpl;
+import com.dzungyb.security.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

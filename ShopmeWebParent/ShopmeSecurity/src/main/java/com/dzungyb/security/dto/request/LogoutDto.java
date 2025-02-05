@@ -1,4 +1,4 @@
-package com.security.security.dto.request;
+package com.dzungyb.security.dto.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
