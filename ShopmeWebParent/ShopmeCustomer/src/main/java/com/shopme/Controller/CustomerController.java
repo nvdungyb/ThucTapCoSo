@@ -1,13 +1,13 @@
 package com.shopme.Controller;
 
-import com.dzungyb.security.advice.exception.EmailAlreadyExistsException;
-import com.dzungyb.security.advice.exception.RoleNotFoundException;
-import com.dzungyb.security.dto.request.EmailCheckDto;
+import com.shopme.advice.exception.EmailAlreadyExistsException;
+import com.shopme.advice.exception.RoleNotFoundException;
+import com.shopme.dto.request.CustomerRegisterDto;
+import com.shopme.dto.request.EmailCheckDto;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.service.CustomerService;
-import com.shopme.message.dto.request.*;
-import com.shopme.message.dto.response.CustomerResponseDto;
+import com.shopme.dto.response.CustomerResponseDto;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

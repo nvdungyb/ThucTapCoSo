@@ -2,12 +2,14 @@ package com.shopme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
-@SpringBootApplication
-public class ShopmeFrontEndApplication {
+@SpringBootApplication(scanBasePackages = {"com.shopme.common","com.shopme"})
+@EnableCaching
+public class ShopmeCustomerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShopmeFrontEndApplication.class, args);
+		SpringApplication.run(ShopmeCustomerApplication.class, args);
 	}
 
 }

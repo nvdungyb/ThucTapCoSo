@@ -1,15 +1,15 @@
 package com.shopme.service;
 
-import com.dzungyb.security.reposistory.RoleRepository;
-import com.dzungyb.security.reposistory.UserRepository;
+import com.shopme.Reposistory.RoleRepository;
+import com.shopme.Reposistory.UserRepository;
 import com.shopme.Reposistory.CustomerRepository;
-import com.dzungyb.security.advice.exception.EmailAlreadyExistsException;
-import com.dzungyb.security.advice.exception.RoleNotFoundException;
+import com.shopme.advice.exception.EmailAlreadyExistsException;
+import com.shopme.advice.exception.RoleNotFoundException;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import com.shopme.common.enums.ERole;
-import com.shopme.message.dto.request.CustomerRegisterDto;
+import com.shopme.dto.request.CustomerRegisterDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
