@@ -2,6 +2,7 @@ package com.shopme.Controller;
 
 import com.shopme.advice.exception.InvalidCredentialsException;
 import com.shopme.common.dto.ApiResponse;
+import com.shopme.dto.request.EmailCheckDto;
 import com.shopme.dto.request.LoginDto;
 import com.shopme.dto.request.LogoutDto;
 import com.shopme.dto.request.RefreshTokenDto;
@@ -75,5 +76,22 @@ public class AuthController {
                 .data(tokens)
                 .path("/auth/access-token")
                 .build());
+    }
+
+    @PostMapping("/auth/email/uniqueness")
+    public ResponseEntity<?> checkDuplicateEmail(@Valid @RequestBody EmailCheckDto emailCheckDto) {
+        logger.info("EmailCheck: {}", emailCheckDto);
+
+        Boolean isUnique = authService.isEmailUnique(emailCheckDto.getId(), emailCheckDto.getEmail());
+        ApiResponse response = ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(isUnique ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                .message(isUnique ? "Email is unique" : "Email is already used. Please choose another email")
+                .data(null)
+                .path("/auth/email/uniqueness")
+                .build();
+
+        return isUnique ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

@@ -42,12 +42,12 @@ public class AuthService {
         User user = checkCredentials(email, password)
                 .orElseThrow(() -> new InvalidCredentialsException("Email or password is incorrect"));
 
-        return generateJwtTokens(user.getEmail(), user.getId());
+        return generateJwtTokens(user);
     }
 
-    public Map<String, String> generateJwtTokens(String email, long userId) {
-        String accessToken = jwtUtils.generateAccessToken(email, ACCESS_TOKEN_VALIDITY);
-        String refreshToken = jwtUtils.generateRefreshToken(String.valueOf(userId), REFRESH_TOKEN_VALIDITY);
+    public Map<String, String> generateJwtTokens(User user) {
+        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), ACCESS_TOKEN_VALIDITY);
+        String refreshToken = jwtUtils.generateRefreshToken(String.valueOf(user.getId()), REFRESH_TOKEN_VALIDITY);
 
         return Map.of(ACCESS_TOKEN_NAME, accessToken, REFRESH_TOKEN_NAME, refreshToken);
     }
@@ -82,10 +82,22 @@ public class AuthService {
             throw new InvalidCredentialsException("Can not save this refresh token in redis");
         }
 
-        return generateJwtTokens(user.getEmail(), user.getId());
+        return generateJwtTokens(user);
     }
 
     public boolean invalidateRefreshToken(String token) {
         return redisService.saveInvalidRefreshToken(token);
+    }
+
+    public boolean isEmailUnique(Long id, String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty())
+            return true;
+
+        boolean isCreatingNew = (id == null);
+        if (isCreatingNew || userOptional.map(User::getId).get() != id) {
+            return false;
+        }
+        return true;
     }
 }
