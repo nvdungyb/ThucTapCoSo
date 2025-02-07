@@ -20,5 +20,6 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
     @Query("SELECT p FROM Product p WHERE p.id = :id")
     Product findProductById(@Param("id") Long id);
 
+    Product findProductByIdAndEnabled(Long id, boolean enabled);
 }
 //    OR p.category.parent.name LIKE %?2%"

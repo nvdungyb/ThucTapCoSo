@@ -66,4 +66,17 @@ public class ProductService {
         Book book = bookMapper.toEntity(bookCreateDto, category, seller);
         return bookReposistory.save(book);
     }
+
+    public Product getDetailProductForCustomer(Long productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
+
+        Product product = productRepository.findProductByIdAndEnabled(productId, true);
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+
+        return product;
+    }
 }
