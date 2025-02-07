@@ -23,7 +23,7 @@ public class MailService {
     @Async
     public void sendEmailVerification(String email, String token) {
         String subject = "Email Verification";
-        String verificationUrl = "http://localhost:8080/techshop/customers/email/verify?token=" + token;
+        String verificationUrl = "http://localhost:8080/techshop/email/verify?token=" + token;
         String message = "<h2>Email Verification</h2>"
                 + "<p>Click the link below to verify your email:</p>"
                 + "<a href=\"" + verificationUrl + "\">Verify Email</a>";

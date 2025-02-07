@@ -81,7 +81,7 @@ public class JwtUtils {
         return validateJwtToken(refreshToken, refreshTokenSecret);
     }
 
-    public Long getCustomerIdFromRefreshToken(String refreshToken) {
+    public Long getUserIdFromRefreshToken(String refreshToken) {
         return Long.parseLong(extractClaim(refreshToken, refreshTokenSecret, Claims::getSubject));
     }
 }

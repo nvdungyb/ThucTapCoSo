@@ -1,7 +1,7 @@
 package com.shopme.advice;
 
 import com.shopme.advice.exception.*;
-import com.shopme.message.ApiResponse;
+import com.shopme.common.dto.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

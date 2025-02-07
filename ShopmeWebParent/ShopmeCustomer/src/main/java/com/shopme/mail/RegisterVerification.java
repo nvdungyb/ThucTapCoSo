@@ -1,11 +1,11 @@
 package com.shopme.mail;
 
+import com.shopme.Reposistory.UserRepository;
 import com.shopme.advice.exception.InvalidTokenException;
 import com.shopme.advice.exception.RedisFailureException;
 import com.shopme.advice.exception.TooManyRequestsException;
 import com.shopme.common.entity.User;
-import com.shopme.redis.RedisService;
-import com.shopme.user.UserRepository;
+import com.shopme.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

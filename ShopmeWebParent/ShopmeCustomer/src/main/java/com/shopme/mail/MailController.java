@@ -3,7 +3,7 @@ package com.shopme.mail;
 import com.shopme.advice.exception.InvalidTokenException;
 import com.shopme.advice.exception.RedisFailureException;
 import com.shopme.advice.exception.TooManyRequestsException;
-import com.shopme.message.ApiResponse;
+import com.shopme.common.dto.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class MailController {
         this.registerVerification = registerVerification;
     }
 
-    @PostMapping("/customers/email/verification")
+    @PostMapping("/email/verification")
     public ResponseEntity<?> verificationEmail(@RequestBody Map<String, String> requestBody) throws TooManyRequestsException, RedisFailureException {
         String email = requestBody.get("email");
         logger.info("Email: {}", maskEmail(email));
@@ -40,11 +40,11 @@ public class MailController {
                         .status(isValidEmail ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
                         .message(isValidEmail ? "Verification email has been sent to " + email : "Invalid email address")
                         .data(null)
-                        .path("/customers/email/verification")
+                        .path("/email/verification")
                         .build());
     }
 
-    @GetMapping("/customers/email/verify")
+    @GetMapping("/email/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam String token) throws InvalidTokenException {
         registerVerification.verifyToken(token);
 
@@ -53,7 +53,7 @@ public class MailController {
                 .status(HttpStatus.OK.value())
                 .message("Email has been verified successfully")
                 .data(null)
-                .path("/customers/email/verify")
+                .path("/email/verify")
                 .build());
     }
 }

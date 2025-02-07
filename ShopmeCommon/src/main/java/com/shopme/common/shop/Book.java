@@ -32,6 +32,6 @@ public class Book {
     private Integer pageCount;
 
     public String toString() {
-        return this.author + " " + this.publisher + " " + this.isbn + " " + this.publicationDate + " " + this.pageCount;
+        return this.product + " " + this.author + " " + this.publisher + " " + this.isbn + " " + this.publicationDate + " " + this.pageCount;
     }
 }

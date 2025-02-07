@@ -2,7 +2,7 @@ package com.shopme.common.entity;
 
 import java.util.Objects;
 
-import com.shopme.common.utils.ERole;
+import com.shopme.common.enums.ERole;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,8 +1,8 @@
 package com.shopme.common.shop;
 
-import com.shopme.common.utils.ECurrency;
-import com.shopme.common.utils.EPaymentMethod;
-import com.shopme.common.utils.EPaymentStatus;
+import com.shopme.common.enums.ECurrency;
+import com.shopme.common.enums.EPaymentMethod;
+import com.shopme.common.enums.EPaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;

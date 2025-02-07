@@ -1,19 +1,25 @@
 package com.shopme.security;
 
+import com.shopme.security.jwt.AuthJwtTokenFilter;
+import com.shopme.security.jwt.JwtUtils;
+import com.shopme.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
-        return new ShopmeCustomerDetailsService();
+        return new UserDetailsServiceImpl();
     }
 
     @Bean
@@ -30,26 +36,25 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private UserDetailsServiceImpl customerDetailsService;
+
+    @Bean
+    public AuthJwtTokenFilter authenticationJwtTokenFilter() {
+        return new AuthJwtTokenFilter(jwtUtils, customerDetailsService);
+    }
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeRequests(request -> request
-                        .requestMatchers("/carts", "/orders").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .usernameParameter("email")
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/")
-                        .loginProcessingUrl("/fontend/login")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/process_logout")           // Vì csrf đã disable nên bất kì http request nào cũng được cho phép, mặc định csrf được kích hoạt thì logout url sẽ là POST method và được khyến khích sử dụng POST để tránh csrf attack.
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                );
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeRequests(request -> request.requestMatchers("/carts", "/orders", "/seller/create/*", "/staff/**").authenticated()
+                        .anyRequest().permitAll());
+
+        http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
