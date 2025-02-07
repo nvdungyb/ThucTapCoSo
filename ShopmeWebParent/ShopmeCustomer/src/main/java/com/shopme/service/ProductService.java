@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,16 +25,20 @@ import java.util.List;
 public class ProductService {
     public static final int PRODUCTS_PER_PAGE = 10;
 
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CategoryReposistory categoryReposistory;
-    @Autowired
-    private SellerReposistory sellerReposistory;
-    @Autowired
-    private BookReposistory bookReposistory;
-    @Autowired
-    private BookMapper bookMapper;
+    private final ProductRepository productRepository;
+    private final CategoryReposistory categoryReposistory;
+    private final SellerReposistory sellerReposistory;
+    private final BookReposistory bookReposistory;
+    private final BookMapper bookMapper;
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProductService.class);
+
+    public ProductService(ProductRepository productRepository, CategoryReposistory categoryReposistory, SellerReposistory sellerReposistory, BookReposistory bookReposistory, BookMapper bookMapper) {
+        this.productRepository = productRepository;
+        this.categoryReposistory = categoryReposistory;
+        this.sellerReposistory = sellerReposistory;
+        this.bookReposistory = bookReposistory;
+        this.bookMapper = bookMapper;
+    }
 
     public Page<Product> listByCategory(int pageNum, Long categoryId) {
         String categoryIdMatch = "-" + String.valueOf(categoryId) + "-";
@@ -68,15 +74,18 @@ public class ProductService {
     }
 
     public Product getDetailProductForCustomer(Long productId) {
-        if (productId == null) {
-            throw new IllegalArgumentException("Product ID cannot be null");
-        }
+        return productRepository.findProductByIdAndEnabled(productId, true)
+                .orElseThrow(() -> {
+                    logger.warn("Product not found or disabled, ID: {}", productId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found or disabled");
+                });
+    }
 
-        Product product = productRepository.findProductByIdAndEnabled(productId, true);
-        if (product == null) {
-            throw new IllegalArgumentException("Product not found");
-        }
-
-        return product;
+    public Product getDetailProductForStaff(Long productId) {
+        return productRepository.findProductById(productId)
+                .orElseThrow(() -> {
+                    logger.warn("Product not found, ID: {}", productId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+                });
     }
 }

@@ -8,6 +8,7 @@ import com.shopme.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/products/detail/{id}")
+    @GetMapping("/products/{id}")
     public ResponseEntity<?> getDetailProductForUser(@PathVariable("id") Long id) {
         logger.info("Get detail product for user with id: " + id);
 
@@ -37,6 +38,22 @@ public class ProductController {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Get detail product for user successfully")
+                .data(responseDto)
+                .build());
+    }
+
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @GetMapping("/staff/products/{id}")
+    public ResponseEntity<?> getDetailProductForStaff(@PathVariable("id") Long id) {
+        logger.info("Get detail product for seller with id: " + id);
+
+        Product product = productService.getDetailProductForStaff(id);
+
+        ProductResponseDto responseDto = ProductMapper.toProductResponseDto(product);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Get detail product for seller successfully")
                 .data(responseDto)
                 .build());
     }

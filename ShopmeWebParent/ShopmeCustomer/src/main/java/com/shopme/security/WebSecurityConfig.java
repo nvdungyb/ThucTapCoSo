@@ -50,7 +50,7 @@ public class WebSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(request -> request.requestMatchers("/carts", "/orders").authenticated()
+                .authorizeRequests(request -> request.requestMatchers("/carts", "/orders", "/seller/create/*", "/staff/**").authenticated()
                         .anyRequest().permitAll());
 
         http.authenticationProvider(authenticationProvider());
