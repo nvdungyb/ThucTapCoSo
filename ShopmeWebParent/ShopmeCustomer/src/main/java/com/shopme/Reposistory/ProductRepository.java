@@ -19,7 +19,7 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
 
     public Product findByAlias(String alias);
 
-    Optional<Product> findProductById(@Param("id") Long id);
+    Optional<Product> findById(@Param("id") Long id);
 
     Optional<Product> findProductByIdAndEnabled(Long id, boolean enabled);
 }

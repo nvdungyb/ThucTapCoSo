@@ -10,7 +10,6 @@ import com.shopme.common.shop.Category;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.mapper.BookMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,18 +73,27 @@ public class ProductService {
     }
 
     public Product getDetailProductForCustomer(Long productId) {
-        return productRepository.findProductByIdAndEnabled(productId, true)
-                .orElseThrow(() -> {
-                    logger.warn("Product not found or disabled, ID: {}", productId);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found or disabled");
-                });
+        return productRepository.findById(productId)
+                .map(product -> {
+                    if (!product.isEnabled()) {
+                        logger.warn("Product {} is not enabled", productId);
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+                    }
+                    // todo: if want to extend the functionality, add more logic here
+                    return product;
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
     }
 
-    public Product getDetailProductForStaff(Long productId) {
-        return productRepository.findProductById(productId)
-                .orElseThrow(() -> {
-                    logger.warn("Product not found, ID: {}", productId);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
-                });
+    public Product getDetailProductForSeller(Long productId, Long sellerId) {
+        return productRepository.findById(productId)
+                .map(product -> {
+                    if (!product.getSeller().getId().equals(sellerId)) {
+                        logger.warn("Seller ID {} tried to access product {} that does not belong to them.", sellerId, productId);
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+                    }
+                    // todo: if want to extend the functionality, add more logic here
+                    return product;
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
     }
 }

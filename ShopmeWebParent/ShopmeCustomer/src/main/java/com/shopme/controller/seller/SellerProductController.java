@@ -53,7 +53,7 @@ public class SellerProductController {
         Long userId = userDetails.getId();
 
         logger.info("Get detail product for seller with id: " + id);
-        Product product = productService.getDetailProductForStaff(id, userId);
+        Product product = productService.getDetailProductForSeller(id, userId);
 
         return ResponseEntity.ok(ApiResponse.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
