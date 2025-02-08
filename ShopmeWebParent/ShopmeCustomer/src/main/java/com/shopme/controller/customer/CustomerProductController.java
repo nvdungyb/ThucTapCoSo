@@ -129,4 +129,24 @@ public class CustomerProductController {
      * GET /products/filter?category={id}&price_min={min}&price_max={max} – Lọc
      */
 
+    @GetMapping("/products/filter")
+    public ResponseEntity<?> filterProducts(@RequestParam(value = "categoryId") Long categoryId,
+                                            @RequestParam(value = "price_min", required = false) Double minPrice,
+                                            @RequestParam(value = "price_max", required = false) Double maxPrice,
+                                            HttpServletRequest request) {
+        logger.info("Filter products with category: " + categoryId + ", min price: " + minPrice + ", max price: " + maxPrice);
+
+        List<Product> products = productService.filterProducts(categoryId, minPrice, maxPrice);
+        List<ProductResponseDto> responseProducts = products.stream()
+                .map(productMapper::toProductResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Filter products successfully")
+                .data(responseProducts)
+                .path(request.getRequestURI())
+                .build());
+    }
 }

@@ -113,4 +113,8 @@ public class ProductService {
         }
         return productRepository.findProductsByKey(key);
     }
+
+    public List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice) {
+        return productRepository.filterProducts(categoryId, minPrice, maxPrice);
+    }
 }

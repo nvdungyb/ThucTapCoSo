@@ -37,5 +37,16 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
     List<Product> findProductsByKey(String key);
 
     List<Product> findAllByCategory_Id(Long categoryId);
+
+    List<Product> findAllByCategory_IdAndPriceGreaterThanEqual(Long categoryId, float priceIsGreaterThan);
+
+    List<Product> findAllByCategory_IdAndPriceIsLessThan(Long categoryId, float priceIsLessThan);
+
+    List<Product> findAllByCategory_IdAndPriceBetween(Long categoryId, float priceAfter, float priceBefore);
+
+    @Query("SELECT p FROM Product p WHERE p.enabled = true AND (p.category.id = ?1 " +
+            "AND ?2 IS NULL OR p.price >= ?2 " +
+            "AND ?3 IS NULL OR p.price <= ?3)")
+    List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice);
 }
 //    OR p.category.parent.name LIKE %?2%"
