@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RestController
-@PreAuthorize("hasRole('SELLER')")
+@EnableMethodSecurity
+@PreAuthorize("hasAuthority('SELLER')")
 public class SellerProductController {
     private final ProductService productService;
     private final ProductMapper productMapper;
@@ -49,7 +51,7 @@ public class SellerProductController {
     }
 
     @GetMapping("/seller/products/{id}")
-    public ResponseEntity<?> getDetailProductForStaff(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getDetailProductForSeller(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getId();
 
         logger.info("Get detail product for seller with id: " + id);

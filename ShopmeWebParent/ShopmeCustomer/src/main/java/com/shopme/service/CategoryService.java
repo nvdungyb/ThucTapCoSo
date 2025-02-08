@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class CategoryService {
     private final CategoryReposistory categoryReposistory;
@@ -33,5 +35,13 @@ public class CategoryService {
 
         Category category = categoryMapper.toEntity(categoryDto, parentCategory);
         return categoryReposistory.save(category);
+    }
+
+    public List<Category> getAllCategories() {
+        return (List<Category>) categoryReposistory.findAll();
+    }
+
+    public List<Category> getAllSubCategories(Long id) {
+        return categoryReposistory.findAllByParentId(id);
     }
 }
