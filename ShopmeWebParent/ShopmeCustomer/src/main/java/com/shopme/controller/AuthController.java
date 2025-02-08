@@ -1,4 +1,4 @@
-package com.shopme.Controller;
+package com.shopme.controller;
 
 import com.shopme.advice.exception.InvalidCredentialsException;
 import com.shopme.common.dto.ApiResponse;

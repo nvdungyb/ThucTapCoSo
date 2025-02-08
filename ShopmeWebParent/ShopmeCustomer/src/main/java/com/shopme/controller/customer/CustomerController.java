@@ -1,4 +1,4 @@
-package com.shopme.Controller;
+package com.shopme.controller.customer;
 
 import com.shopme.advice.exception.EmailAlreadyExistsException;
 import com.shopme.advice.exception.RoleNotFoundException;

@@ -1,30 +1,30 @@
-package com.shopme.Controller;
+package com.shopme.controller.customer;
 
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.service.ProductService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
 
-@Slf4j
 @RestController
-public class ProductController {
+public class CustomerProductController {
     private final ProductService productService;
-    private final Logger logger = Logger.getLogger(ProductController.class.getName());
+    private final ProductMapper productMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CustomerProductController.class);
 
-    public ProductController(ProductService productService) {
+    public CustomerProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping("/products/{id}")
@@ -33,28 +33,12 @@ public class ProductController {
 
         Product product = productService.getDetailProductForCustomer(id);
 
-        ProductResponseDto responseDto = ProductMapper.toProductResponseDto(product);
         return ResponseEntity.ok(ApiResponse.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Get detail product for user successfully")
-                .data(responseDto)
-                .build());
-    }
-
-    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
-    @GetMapping("/staff/products/{id}")
-    public ResponseEntity<?> getDetailProductForStaff(@PathVariable("id") Long id) {
-        logger.info("Get detail product for seller with id: " + id);
-
-        Product product = productService.getDetailProductForStaff(id);
-
-        ProductResponseDto responseDto = ProductMapper.toProductResponseDto(product);
-        return ResponseEntity.ok(ApiResponse.builder()
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .status(HttpStatus.OK.value())
-                .message("Get detail product for seller successfully")
-                .data(responseDto)
+                .data(productMapper.toProductResponseDto(product))
+                .path("/products/{id}")
                 .build());
     }
 }

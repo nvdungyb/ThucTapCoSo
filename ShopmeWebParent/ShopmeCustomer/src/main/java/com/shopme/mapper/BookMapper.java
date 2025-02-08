@@ -38,14 +38,7 @@ public class BookMapper {
     }
 
     public BookResponseDto toDto(Book book) {
-        BookResponseDto bookResponseDto = BookResponseDto.builder()
-                .id(book.getId())
-                .author(book.getAuthor())
-                .publisher(book.getPublisher())
-                .isbn(book.getIsbn())
-                .publicationDate(book.getPublicationDate())
-                .pageCount(book.getPageCount())
-                .build();
+        BookResponseDto bookResponseDto = new BookResponseDto(book);
         return bookResponseDto;
     }
 }
