@@ -4,10 +4,13 @@ import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Category;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.CategoryDto;
+import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.CategoryMapper;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.service.CategoryService;
 import com.shopme.service.ProductService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -83,6 +86,24 @@ public class CustomerProductController {
                 .message("Get all sub categories successfully")
                 .data(responseCategories)
                 .path("/categories/" + id + "/subcategories")
+                .build());
+    }
+
+    @GetMapping("/categories/{id}/products")
+    public ResponseEntity<?> getProductsByCategory(@PathVariable("id") Long id, HttpServletRequest request) {
+        logger.info("Get all products by category id: " + id);
+
+        List<Product> products = productService.getProductsByCategory(id);
+        List<ProductResponseDto> responseProducts = products.stream()
+                .map(productMapper::toProductResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Get all products by category id successfully")
+                .data(responseProducts)
+                .path(request.getRequestURI())
                 .build());
     }
 }

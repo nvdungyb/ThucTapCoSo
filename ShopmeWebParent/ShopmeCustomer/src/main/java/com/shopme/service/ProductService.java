@@ -96,4 +96,12 @@ public class ProductService {
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
     }
+
+    public List<Product> getProductsByCategory(Long id) {
+        productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+
+        return productRepository.findAllByCategory_Id(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "No products found for category with id: " + id));
+    }
 }

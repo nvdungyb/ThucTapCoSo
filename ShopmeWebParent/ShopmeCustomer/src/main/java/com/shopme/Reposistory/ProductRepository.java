@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +23,7 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
     Optional<Product> findById(@Param("id") Long id);
 
     Optional<Product> findProductByIdAndEnabled(Long id, boolean enabled);
+
+    Optional<List<Product>> findAllByCategory_Id(Long categoryId);
 }
 //    OR p.category.parent.name LIKE %?2%"
