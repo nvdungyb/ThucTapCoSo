@@ -9,7 +9,6 @@ import com.shopme.mapper.CategoryMapper;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.service.CategoryService;
 import com.shopme.service.ProductService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -106,4 +106,27 @@ public class CustomerProductController {
                 .path(request.getRequestURI())
                 .build());
     }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<?> searchProducts(@RequestParam("key") String key, HttpServletRequest request) {
+        logger.info("Search products with keyword: " + key);
+
+        List<Product> products = productService.searchProductsByKey(key);
+        List<ProductResponseDto> responseProducts = products.stream()
+                .map(productMapper::toProductResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Search products successfully")
+                .data(responseProducts)
+                .path(request.getRequestURI())
+                .build());
+    }
+
+    /**
+     * GET /products/filter?category={id}&price_min={min}&price_max={max} – Lọc
+     */
+
 }

@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.cert.CollectionCertStoreParameters;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -101,7 +104,13 @@ public class ProductService {
         productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
-        return productRepository.findAllByCategory_Id(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "No products found for category with id: " + id));
+        return productRepository.findAllByCategory_Id(id);
+    }
+
+    public List<Product> searchProductsByKey(String key) {
+        if (key == null || key.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return productRepository.findProductsByKey(key);
     }
 }

@@ -24,6 +24,18 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
 
     Optional<Product> findProductByIdAndEnabled(Long id, boolean enabled);
 
-    Optional<List<Product>> findAllByCategory_Id(Long categoryId);
+    //    @Query(value = "SELECT * FROM products p WHERE p.enabled = true AND " +
+//            "MATCH(p.name, p.alias, p.short_description, p.full_description) " +
+//            "AGAINST(:key IN NATURAL LANGUAGE MODE)",
+//            nativeQuery = true)
+
+    // todo: if you have large data, you should use the elasticsearch.
+    @Query("SELECT p FROM Product p WHERE p.enabled = true AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :key, '%')) " +
+            "OR LOWER(p.alias) LIKE LOWER(CONCAT('%', :key, '%')) " +
+            "OR LOWER(p.shortDescription) LIKE LOWER(CONCAT('%', :key, '%')) " +
+            "OR LOWER(p.fullDescription) LIKE LOWER(CONCAT('%', :key, '%')))")
+    List<Product> findProductsByKey(String key);
+
+    List<Product> findAllByCategory_Id(Long categoryId);
 }
 //    OR p.category.parent.name LIKE %?2%"
