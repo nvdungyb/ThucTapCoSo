@@ -4,8 +4,8 @@ import com.shopme.common.shop.Cart;
 import com.shopme.common.shop.CartItem;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.CartItemDto;
+import com.shopme.dto.response.CartItemResponseDto;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class CartItemMapper {
@@ -19,5 +19,17 @@ public class CartItemMapper {
                 .build();
 
         return cartItem;
+    }
+
+    public CartItemResponseDto toDto(CartItem cartItem) {
+        CartItemResponseDto cartItemResponseDto = CartItemResponseDto.builder()
+                .cartId(cartItem.getCart().getId())
+                .productId(cartItem.getProduct().getId())
+                .quantity(cartItem.getQuantity())
+                .isSelected(cartItem.isSelected())
+                .createdAt(cartItem.getCreatedAt())
+                .build();
+
+        return cartItemResponseDto;
     }
 }

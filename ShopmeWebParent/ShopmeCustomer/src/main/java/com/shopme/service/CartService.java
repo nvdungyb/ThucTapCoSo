@@ -8,7 +8,9 @@ import com.shopme.common.shop.Cart;
 import com.shopme.common.shop.CartItem;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.CartItemDto;
+import com.shopme.dto.request.CartItemUpdateDto;
 import com.shopme.mapper.CartItemMapper;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -64,22 +66,34 @@ public class CartService {
             int newQuantity = cartItem.getQuantity() + cartItemDto.getQuantity();
 
             // 4. Validate stock before updating quantity
-            if (newQuantity > product.getStockQuantity()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product quantity exceeds available stock");
-            }
-
+            validateCartItem(newQuantity, product);
             cartItem.setQuantity(newQuantity);
         } else {
             // 5. Create a new cart item
-            if (cartItemDto.getQuantity() > product.getStockQuantity()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product quantity exceeds available stock");
-            }
-
+            validateCartItem(cartItemDto.getQuantity(), product);
             cartItem = cartItemMapper.toEntity(cartItemDto, userCart);
             userCart.getCartItems().add(cartItem);  // Ensure it's added only once
         }
-
         // 6. Save updated cart
         return cartRepository.save(userCart);
+    }
+
+    public CartItem updateCartItem(@Valid CartItemUpdateDto cartItemUpdateDto, Long userId) {
+        CartItem cartItem = cartItemReposistory.findById(cartItemUpdateDto.getCartItemId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found"));
+
+        if (!cartItem.getCart().getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        int newQuantity = cartItemUpdateDto.getQuantity();
+        validateCartItem(newQuantity, cartItem.getProduct());
+        cartItem.setQuantity(newQuantity);
+        return cartItemReposistory.save(cartItem);
+    }
+
+    public void validateCartItem(long newQuantity, Product product) {
+        if (newQuantity > product.getStockQuantity())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product quantity exceeds available stock");
     }
 }

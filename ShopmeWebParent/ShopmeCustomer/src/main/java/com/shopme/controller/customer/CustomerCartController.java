@@ -2,7 +2,10 @@ package com.shopme.controller.customer;
 
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Cart;
+import com.shopme.common.shop.CartItem;
 import com.shopme.dto.request.CartItemDto;
+import com.shopme.dto.request.CartItemUpdateDto;
+import com.shopme.mapper.CartItemMapper;
 import com.shopme.mapper.CartMapper;
 import com.shopme.security.UserDetailsImpl;
 import com.shopme.service.CartService;
@@ -14,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,10 +29,12 @@ public class CustomerCartController {
     private final CartService cartService;
     private final Logger logger = LoggerFactory.getLogger(CustomerCartController.class);
     private final CartMapper cartMapper;
+    private final CartItemMapper cartItemMapper;
 
-    public CustomerCartController(CartService cartService, CartMapper cartMapper) {
+    public CustomerCartController(CartService cartService, CartMapper cartMapper, CartItemMapper cartItemMapper) {
         this.cartService = cartService;
         this.cartMapper = cartMapper;
+        this.cartItemMapper = cartItemMapper;
     }
 
     @GetMapping("/customers/cart")
@@ -65,9 +67,23 @@ public class CustomerCartController {
                 .build());
     }
 
+    @PutMapping("/customers/cart/update")
+    public ResponseEntity<?> updateCartItem(@Valid @RequestBody CartItemUpdateDto cartItemUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
+        logger.info("Update cart item for user with id: " + userId);
+
+        CartItem cartItem = cartService.updateCartItem(cartItemUpdateDto, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Cart item has been updated successfully")
+                .data(cartItemMapper.toDto(cartItem))
+                .build());
+    }
+
     /**
      * GET /cart – Xem giỏ hàng
-     * PUT /cart/update/{id} – Cập nhật số lượng sản phẩm trong giỏ hàng
      * DELETE /cart/remove/{id} – Xóa sản phẩm khỏi giỏ hàng
      *
      */
