@@ -25,23 +25,26 @@ public class CartService {
     private final CartItemMapper cartItemMapper;
     private final ProductRepository productRepository;
     private final CartItemReposistory cartItemReposistory;
+    private final CartReposistory cartReposistory;
 
-    public CartService(CartReposistory cartRepository, CartItemMapper cartItemMapper, ProductRepository productRepository, CartItemReposistory cartItemReposistory) {
+    public CartService(CartReposistory cartRepository, CartItemMapper cartItemMapper, ProductRepository productRepository, CartItemReposistory cartItemReposistory, CartReposistory cartReposistory) {
         this.cartRepository = cartRepository;
         this.cartItemMapper = cartItemMapper;
         this.productRepository = productRepository;
         this.cartItemReposistory = cartItemReposistory;
+        this.cartReposistory = cartReposistory;
     }
 
     public Cart getCartOrCreateNew(Long userId) {
-        Cart cart = cartRepository.findByUser_Id((userId)).orElse(Cart.builder()
-                .createAt(new Date())
-                .isActive(true)
-                .user(User.builder().id(userId).build())
-                .updateAt(new Date())
-                .build());
+        Cart cart = cartRepository.findByUser_Id((userId))
+                .orElseGet(() -> cartReposistory.save(Cart.builder()
+                        .createAt(new Date())
+                        .isActive(true)
+                        .user(User.builder().id(userId).build())
+                        .updateAt(new Date())
+                        .build()));
 
-        return cartRepository.save(cart);
+        return cart;
     }
 
     public Cart addProductToCart(CartItemDto cartItemDto, Long userId) {

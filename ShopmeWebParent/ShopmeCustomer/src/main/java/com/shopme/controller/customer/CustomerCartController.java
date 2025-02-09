@@ -46,7 +46,7 @@ public class CustomerCartController {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Cart has been retrieved successfully")
-                .data(cart)
+                .data(cartMapper.toDto(cart))
                 .build());
     }
 
