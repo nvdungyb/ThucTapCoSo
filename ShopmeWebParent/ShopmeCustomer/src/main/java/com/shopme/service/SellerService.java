@@ -7,6 +7,7 @@ import com.shopme.advice.exception.EmailAlreadyExistsException;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.Seller;
 import com.shopme.common.entity.User;
+import com.shopme.common.enums.ERole;
 import com.shopme.dto.request.SellerRegisterDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,9 @@ public class SellerService {
                 .map(name -> roleRepository.findByERole(name))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toSet());
+
+        // Add default role
+        roleRepository.findByERole(ERole.SELLER).ifPresent(roles::add);
 
         Seller seller = Seller.builder()
                 .user(User.builder()
