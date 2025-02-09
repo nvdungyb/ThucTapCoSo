@@ -4,9 +4,11 @@ import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Book;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
+import com.shopme.dto.request.BookUpdateDto;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.security.UserDetailsImpl;
 import com.shopme.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,23 @@ public class SellerProductController {
         );
     }
 
+    @PutMapping("/seller/products/book/update")
+    public ResponseEntity<?> updateBook(@Valid @RequestBody BookUpdateDto bookUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        Long userId = userDetails.getId();
+
+        logger.info("DTO: {}", bookUpdateDto);
+        Book book = productService.updateBook(bookUpdateDto, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Book has been updated successfully")
+                .data(productMapper.toProductResponseDto(book))
+                .path(request.getRequestURI())
+                .build()
+        );
+    }
+
     @GetMapping("/seller/products/{id}")
     public ResponseEntity<?> getDetailProductForSeller(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getId();
@@ -65,4 +84,11 @@ public class SellerProductController {
                 .path("/seller/products/" + id)
                 .build());
     }
+
+    /**
+     * POST /seller/products/add – Thêm sản phẩm mới
+     * PUT /seller/products/update/{id} – Cập nhật sản phẩm
+     * DELETE /seller/products/delete/{id} – Xóa sản phẩm
+     * GET /seller/products – Danh sách sản phẩm của người bán
+     */
 }

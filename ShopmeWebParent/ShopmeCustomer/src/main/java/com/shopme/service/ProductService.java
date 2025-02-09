@@ -9,7 +9,9 @@ import com.shopme.common.shop.Book;
 import com.shopme.common.shop.Category;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
+import com.shopme.dto.request.BookUpdateDto;
 import com.shopme.mapper.BookMapper;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.cert.CollectionCertStoreParameters;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -108,13 +107,25 @@ public class ProductService {
     }
 
     public List<Product> searchProductsByKey(String key) {
-        if (key == null || key.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return productRepository.findProductsByKey(key);
+        return null;
     }
 
     public List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice) {
         return productRepository.filterProducts(categoryId, minPrice, maxPrice);
+    }
+
+    public Book updateBook(@Valid BookUpdateDto bookUpdateDto, Long userId) {
+        Book book = bookReposistory.findById(bookUpdateDto.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+
+        if (!book.getSeller().getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        Category category = categoryReposistory.findById(bookUpdateDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        bookMapper.updateFromDto(bookUpdateDto, book, category);
+        return bookReposistory.save(book);
     }
 }
