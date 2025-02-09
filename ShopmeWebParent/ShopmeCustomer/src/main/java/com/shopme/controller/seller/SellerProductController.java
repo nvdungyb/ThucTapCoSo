@@ -85,6 +85,21 @@ public class SellerProductController {
                 .build());
     }
 
+    @DeleteMapping("/seller/products/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
+
+        logger.info("Delete product with id: " + id);
+        productService.deleteProduct(id, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Product has been deleted successfully")
+                .path("/seller/products/" + id)
+                .build());
+    }
+
     /**
      * POST /seller/products/add – Thêm sản phẩm mới
      * PUT /seller/products/update/{id} – Cập nhật sản phẩm

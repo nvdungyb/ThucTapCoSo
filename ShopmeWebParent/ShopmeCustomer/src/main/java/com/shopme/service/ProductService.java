@@ -128,4 +128,15 @@ public class ProductService {
         bookMapper.updateFromDto(bookUpdateDto, book, category);
         return bookReposistory.save(book);
     }
+
+    public void deleteProduct(Long id, Long userId) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Product not found"));
+
+        if (!product.getSeller().getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        productRepository.deleteById(id);
+    }
 }
