@@ -139,4 +139,15 @@ public class ProductService {
 
         productRepository.deleteById(id);
     }
+
+    public List<Product> getProductsBySeller(Long userId) {
+        List<Product> products = productRepository.findProductsBySellerUserId(userId);
+
+        if (products.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No products found for this seller");
+        }
+
+        return products;
+    }
+
 }

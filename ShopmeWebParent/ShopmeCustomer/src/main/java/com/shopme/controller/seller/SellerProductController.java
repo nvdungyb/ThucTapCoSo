@@ -5,6 +5,7 @@ import com.shopme.common.shop.Book;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.dto.request.BookUpdateDto;
+import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.security.UserDetailsImpl;
 import com.shopme.service.ProductService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @EnableMethodSecurity
@@ -100,10 +102,28 @@ public class SellerProductController {
                 .build());
     }
 
+    @GetMapping("/seller/products")
+    public ResponseEntity<?> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
+
+        logger.info("Get all products for seller with id: " + userId);
+        List<Product> products = productService.getProductsBySeller(userId);
+        List<ProductResponseDto> responseProducts = products.stream()
+                .map(productMapper::toProductResponseDto)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Get all products for seller successfully")
+                .data(responseProducts)
+                .path("/seller/products")
+                .build());
+    }
+
     /**
      * POST /seller/products/add – Thêm sản phẩm mới
      * PUT /seller/products/update/{id} – Cập nhật sản phẩm
-     * DELETE /seller/products/delete/{id} – Xóa sản phẩm
      * GET /seller/products – Danh sách sản phẩm của người bán
      */
 }

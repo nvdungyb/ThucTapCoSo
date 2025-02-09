@@ -1,5 +1,6 @@
 package com.shopme.Reposistory;
 
+import com.shopme.common.entity.Seller;
 import com.shopme.common.shop.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,5 +49,10 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
             "AND ?2 IS NULL OR p.price >= ?2 " +
             "AND ?3 IS NULL OR p.price <= ?3)")
     List<Product> filterProducts(Long categoryId, Double minPrice, Double maxPrice);
+
+    List<Product> findProductBySeller(Seller seller);
+
+    @Query("SELECT p FROM Product p JOIN p.seller s WHERE s.user.id = ?1")
+    List<Product> findProductsBySellerUserId(Long userId);
 }
 //    OR p.category.parent.name LIKE %?2%"
