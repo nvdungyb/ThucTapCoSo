@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface WishlistReposistory extends CrudRepository<WishlistItem, Long> {
     List<WishlistItem> findAllByUser_Id(Long userId);
+
+    Optional<WishlistItem> findByUser_IdAndProduct_Id(Long userId, Long productId);
 }

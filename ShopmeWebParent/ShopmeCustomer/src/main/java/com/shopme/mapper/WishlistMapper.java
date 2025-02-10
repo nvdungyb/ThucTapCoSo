@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class WishlistMapper {
     public List<WishlistResponseDto> toDto(List<WishlistItem> wishList) {
-        List<WishlistResponseDto> wishlistResponseDtos = wishList.isEmpty() ?
+        List<WishlistResponseDto> wishlistResponseDtos = !wishList.isEmpty() ?
                 wishList.stream()
                         .map(wishlistItem -> WishlistResponseDto.builder()
                                 .wishlistId(wishlistItem.getId())
