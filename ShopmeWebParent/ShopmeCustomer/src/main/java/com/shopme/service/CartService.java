@@ -110,4 +110,14 @@ public class CartService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error occurred while removing cart item");
         }
     }
+
+    // todo: tối ưu hiệu suất backend, (cartItem -> Cart -> User -> Cart) (N+1 problem)
+    public Integer selectCartItem(Long cartItemId, Long userId, boolean selected) {
+        int rowsAffected = cartItemReposistory.updateSelected(cartItemId, userId, selected);
+        if (rowsAffected == 0) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized or Cart item not found");
+        }
+        return rowsAffected;
+    }
+
 }

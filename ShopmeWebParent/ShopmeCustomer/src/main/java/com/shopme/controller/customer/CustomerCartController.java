@@ -95,4 +95,20 @@ public class CustomerCartController {
                 .message("Product has been removed from cart successfully")
                 .build());
     }
+
+    @PutMapping("/customers/cart/select/{id}")
+    public ResponseEntity<?> selectCartItem(@PathVariable("id") Long cartItemId,
+                                            @RequestParam(name = "selected", defaultValue = "true") boolean selected,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
+        logger.info("Select cart item id {} for user with id: {}", cartItemId, userId);
+
+        Integer isSelected = cartService.selectCartItem(cartItemId, userId, selected);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Cart item has been selected successfully")
+                .data(isSelected)
+                .build());
+    }
 }
