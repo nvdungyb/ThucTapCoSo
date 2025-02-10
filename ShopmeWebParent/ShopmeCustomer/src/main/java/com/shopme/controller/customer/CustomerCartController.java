@@ -82,9 +82,17 @@ public class CustomerCartController {
                 .build());
     }
 
-    /**
-     * GET /cart – Xem giỏ hàng
-     * DELETE /cart/remove/{id} – Xóa sản phẩm khỏi giỏ hàng
-     *
-     */
+    @DeleteMapping("/customers/cart/remove/{id}")
+    public ResponseEntity<?> removeProductFromCart(@PathVariable("id") Long cartItemId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
+        logger.info("Remove product from cart for user with id: " + userId);
+
+        cartService.removeProductFromCart(cartItemId, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Product has been removed from cart successfully")
+                .build());
+    }
 }

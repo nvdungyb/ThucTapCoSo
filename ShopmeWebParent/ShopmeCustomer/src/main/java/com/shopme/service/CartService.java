@@ -96,4 +96,18 @@ public class CartService {
         if (newQuantity > product.getStockQuantity())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product quantity exceeds available stock");
     }
+
+    public void removeProductFromCart(Long cartItemId, Long userId) {
+        if (!cartItemReposistory.existsById(cartItemId))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found");
+
+        CartItem cartItem = cartItemReposistory.findByIdAndCart_User_Id(cartItemId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized to remove this cart item"));
+
+        try {
+            cartItemReposistory.delete(cartItem);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error occurred while removing cart item");
+        }
+    }
 }
