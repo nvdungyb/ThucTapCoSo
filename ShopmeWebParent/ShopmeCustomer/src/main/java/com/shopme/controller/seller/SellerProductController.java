@@ -73,6 +73,23 @@ public class SellerProductController {
         );
     }
 
+    @PostMapping("/seller/products/laptop/add")
+    public ResponseEntity<?> createLaptop(@Valid @RequestBody LaptopCreateDto laptopCreateDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        Long userId = userDetails.getId();
+
+        logger.info("DTO: {}", laptopCreateDto);
+        Laptop laptop = productService.createLaptop(laptopCreateDto, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("New Laptop has been created successfully")
+                .data(productMapper.toProductResponseDto(laptop))
+                .path(request.getRequestURI())
+                .build()
+        );
+    }
+
     @GetMapping("/seller/products/{id}")
     public ResponseEntity<?> getDetailProductForSeller(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();

@@ -1,16 +1,16 @@
 package com.shopme.service;
 
-import com.shopme.Reposistory.BookReposistory;
-import com.shopme.Reposistory.CategoryReposistory;
-import com.shopme.Reposistory.ProductRepository;
-import com.shopme.Reposistory.SellerReposistory;
+import com.shopme.Reposistory.*;
 import com.shopme.common.entity.Seller;
 import com.shopme.common.shop.Book;
 import com.shopme.common.shop.Category;
+import com.shopme.common.shop.Laptop;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.dto.request.BookUpdateDto;
+import com.shopme.dto.request.LaptopCreateDto;
 import com.shopme.mapper.BookMapper;
+import com.shopme.mapper.LaptopMapper;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,13 +32,17 @@ public class ProductService {
     private final BookReposistory bookReposistory;
     private final BookMapper bookMapper;
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProductService.class);
+    private final LaptopReposistory laptopReposistory;
+    private final LaptopMapper laptopMapper;
 
-    public ProductService(ProductRepository productRepository, CategoryReposistory categoryReposistory, SellerReposistory sellerReposistory, BookReposistory bookReposistory, BookMapper bookMapper) {
+    public ProductService(ProductRepository productRepository, CategoryReposistory categoryReposistory, SellerReposistory sellerReposistory, BookReposistory bookReposistory, BookMapper bookMapper, LaptopReposistory laptopReposistory, LaptopMapper laptopMapper) {
         this.productRepository = productRepository;
         this.categoryReposistory = categoryReposistory;
         this.sellerReposistory = sellerReposistory;
         this.bookReposistory = bookReposistory;
         this.bookMapper = bookMapper;
+        this.laptopReposistory = laptopReposistory;
+        this.laptopMapper = laptopMapper;
     }
 
     public Page<Product> listByCategory(int pageNum, Long categoryId) {
@@ -68,7 +72,7 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         Seller seller = sellerReposistory.findByUserId(sellerId)
-                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied"));
 
         Book book = bookMapper.toEntity(bookCreateDto, category, seller);
         return bookReposistory.save(book);
@@ -100,10 +104,13 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(Long id) {
-        productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+        List<Product> products = productRepository.findAllByCategory_Id(id);
 
-        return productRepository.findAllByCategory_Id(id);
+        if (products.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No products found for this category");
+        }
+
+        return products;
     }
 
     public List<Product> searchProductsByKey(String key) {
@@ -150,4 +157,19 @@ public class ProductService {
         return products;
     }
 
+    @Transactional
+    public Laptop createLaptop(@Valid LaptopCreateDto laptopCreateDto, Long userId) {
+        if (laptopReposistory.existsByAlias(laptopCreateDto.getAlias())) {
+            throw new IllegalArgumentException("Alias is already used by another laptop");
+        }
+
+        Category category = categoryReposistory.findById(laptopCreateDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        Seller seller = sellerReposistory.findByUserId(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied"));
+
+        Laptop laptop = laptopMapper.toEntity(laptopCreateDto, category, seller);
+        return laptopReposistory.save(laptop);
+    }
 }
