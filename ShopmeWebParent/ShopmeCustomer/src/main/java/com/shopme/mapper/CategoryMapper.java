@@ -2,6 +2,7 @@ package com.shopme.mapper;
 
 import com.shopme.common.shop.Category;
 import com.shopme.dto.request.CategoryDto;
+import com.shopme.dto.response.CategoryResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,14 +20,15 @@ public class CategoryMapper {
         return category;
     }
 
-    public CategoryDto toDto(Category category) {
-        CategoryDto categoryDto = CategoryDto.builder()
+    public CategoryResponseDto toDto(Category category) {
+        CategoryResponseDto categoryResponseDto = CategoryResponseDto.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .alias(category.getAlias())
                 .image(category.getImage())
                 .enabled(category.isEnabled())
                 .parentId(category.getParent() != null ? category.getParent().getId() : null)
                 .build();
-        return categoryDto;
+        return categoryResponseDto;
     }
 }
