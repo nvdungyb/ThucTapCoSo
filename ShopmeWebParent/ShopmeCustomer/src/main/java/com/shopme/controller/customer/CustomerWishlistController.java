@@ -6,6 +6,7 @@ import com.shopme.dto.request.WishlistDto;
 import com.shopme.mapper.WishlistMapper;
 import com.shopme.security.UserDetailsImpl;
 import com.shopme.service.WishlistService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class CustomerWishlistController {
     }
 
     @GetMapping("/customers/wishlist")
-    public ResponseEntity<?> viewWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> viewWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         long userId = userDetails.getId();
         logger.info("View wishlist for user with id: {}", userId);
 
@@ -49,11 +50,12 @@ public class CustomerWishlistController {
                         .status(200)
                         .message("Wishlist has been retrieved successfully")
                         .data(wishlistMapper.toDto(wishList))
+                        .path(request.getRequestURI())
                         .build());
     }
 
     @PostMapping("/customers/wishlist/toggle")
-    public ResponseEntity<?> addProductToWishlist(@Valid @RequestBody WishlistDto wishlistDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> addProductToWishlist(@Valid @RequestBody WishlistDto wishlistDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         long userId = userDetails.getId();
         logger.info("Add product to wishlist for user with id: {}", userId);
 
@@ -63,6 +65,7 @@ public class CustomerWishlistController {
                         .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                         .status(200)
                         .message("This operation has been completed successfully")
+                        .path(request.getRequestURI())
                         .build());
     }
 }

@@ -7,6 +7,8 @@ import com.shopme.common.entity.Customer;
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.service.CustomerService;
 import com.shopme.dto.response.CustomerResponseDto;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,7 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/register")
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerRegisterDto registerDto) throws EmailAlreadyExistsException, RoleNotFoundException {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerRegisterDto registerDto, HttpServletRequest request) throws EmailAlreadyExistsException, RoleNotFoundException {
         logger.info("DTO: {}", registerDto);
 
         // Register customer.
@@ -36,7 +38,7 @@ public class CustomerController {
                 .status(HttpStatus.OK.value())
                 .message("New customer account has been created successfully")
                 .data(CustomerResponseDto.build(customer))
-                .path("/customers/register")
+                .path(request.getRequestURI())
                 .build()
         );
     }

@@ -2,9 +2,11 @@ package com.shopme.controller.seller;
 
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Book;
+import com.shopme.common.shop.Laptop;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.dto.request.BookUpdateDto;
+import com.shopme.dto.request.LaptopCreateDto;
 import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.security.UserDetailsImpl;
@@ -38,7 +40,7 @@ public class SellerProductController {
     }
 
     @PostMapping("/seller/products/book/add")
-    public ResponseEntity<?> createBook(@Valid @RequestBody BookCreateDto bookCreateDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> createBook(@Valid @RequestBody BookCreateDto bookCreateDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
 
         logger.info("DTO: {}", bookCreateDto);
@@ -49,7 +51,7 @@ public class SellerProductController {
                 .status(HttpStatus.OK.value())
                 .message("New Book has been created successfully")
                 .data(productMapper.toProductResponseDto(book))
-                .path("/seller/products/book/add")
+                .path(request.getRequestURI())
                 .build()
         );
     }
@@ -72,7 +74,7 @@ public class SellerProductController {
     }
 
     @GetMapping("/seller/products/{id}")
-    public ResponseEntity<?> getDetailProductForSeller(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getDetailProductForSeller(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
 
         logger.info("Get detail product for seller with id: " + id);
@@ -83,12 +85,12 @@ public class SellerProductController {
                 .status(HttpStatus.OK.value())
                 .message("Get detail product for seller successfully")
                 .data(productMapper.toProductResponseDto(product))
-                .path("/seller/products/" + id)
+                .path(request.getRequestURI())
                 .build());
     }
 
     @DeleteMapping("/seller/products/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
 
         logger.info("Delete product with id: " + id);
@@ -98,12 +100,12 @@ public class SellerProductController {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Product has been deleted successfully")
-                .path("/seller/products/" + id)
+                .path(request.getRequestURI())
                 .build());
     }
 
     @GetMapping("/seller/products")
-    public ResponseEntity<?> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
 
         logger.info("Get all products for seller with id: " + userId);
@@ -117,13 +119,13 @@ public class SellerProductController {
                 .status(HttpStatus.OK.value())
                 .message("Get all products for seller successfully")
                 .data(responseProducts)
-                .path("/seller/products")
+                .path(request.getRequestURI())
                 .build());
     }
 
     /**
      * POST /seller/products/add – Thêm sản phẩm mới
      * PUT /seller/products/update/{id} – Cập nhật sản phẩm
-     * GET /seller/products – Danh sách sản phẩm của người bán
+     * DELETE /seller/products/delete/{id} – Xóa sản phẩm
      */
 }

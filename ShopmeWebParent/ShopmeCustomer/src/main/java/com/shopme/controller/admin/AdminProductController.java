@@ -6,6 +6,7 @@ import com.shopme.dto.request.CategoryDto;
 import com.shopme.mapper.CategoryMapper;
 import com.shopme.service.CategoryService;
 import com.shopme.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class AdminProductController {
     }
 
     @PostMapping("/admin/categories/add")
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto, HttpServletRequest request) {
         logger.info("Create category: {}", categoryDto);
 
         Category category = categoryService.createCategory(categoryDto);
@@ -46,6 +47,15 @@ public class AdminProductController {
                 .status(HttpStatus.OK.value())
                 .message("Create category successfully")
                 .data(categoryMapper.toDto(category))
+                .path(request.getRequestURI())
                 .build());
     }
+
+    /**
+     * GET /admin/products – Danh sách sản phẩm
+     * DELETE /admin/products/{id} – Xóa sản phẩm
+     * POST /admin/categories/add – Thêm danh mục sản phẩm
+     * PUT /admin/categories/update/{id} – Cập nhật danh mục sản phẩm
+     * DELETE /admin/categories/delete/{id} – Xóa danh mục sản phẩm
+     */
 }

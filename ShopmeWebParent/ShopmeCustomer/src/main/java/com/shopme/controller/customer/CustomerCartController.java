@@ -9,6 +9,7 @@ import com.shopme.mapper.CartItemMapper;
 import com.shopme.mapper.CartMapper;
 import com.shopme.security.UserDetailsImpl;
 import com.shopme.service.CartService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class CustomerCartController {
     }
 
     @GetMapping("/customers/cart")
-    public ResponseEntity<?> viewCart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> viewCart(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
         logger.info("View cart for user with id: " + userId);
 
@@ -49,11 +50,12 @@ public class CustomerCartController {
                 .status(HttpStatus.OK.value())
                 .message("Cart has been retrieved successfully")
                 .data(cartMapper.toDto(cart))
+                .path(request.getRequestURI())
                 .build());
     }
 
     @PostMapping("/customers/cart/add")
-    public ResponseEntity<?> addProductToCart(@Valid @RequestBody CartItemDto cartItemDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> addProductToCart(@Valid @RequestBody CartItemDto cartItemDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
         logger.info("Add product to cart for user with id: " + userId);
 
@@ -64,11 +66,12 @@ public class CustomerCartController {
                 .status(HttpStatus.OK.value())
                 .message("Product has been added to cart successfully")
                 .data(cartMapper.toDto(cart))
+                .path(request.getRequestURI())
                 .build());
     }
 
     @PutMapping("/customers/cart/update")
-    public ResponseEntity<?> updateCartItem(@Valid @RequestBody CartItemUpdateDto cartItemUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> updateCartItem(@Valid @RequestBody CartItemUpdateDto cartItemUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
         logger.info("Update cart item for user with id: " + userId);
 
@@ -79,11 +82,12 @@ public class CustomerCartController {
                 .status(HttpStatus.OK.value())
                 .message("Cart item has been updated successfully")
                 .data(cartItemMapper.toDto(cartItem))
+                .path(request.getRequestURI())
                 .build());
     }
 
     @DeleteMapping("/customers/cart/remove/{id}")
-    public ResponseEntity<?> removeProductFromCart(@PathVariable("id") Long cartItemId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> removeProductFromCart(@PathVariable("id") Long cartItemId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
         logger.info("Remove product from cart for user with id: " + userId);
 
@@ -93,13 +97,14 @@ public class CustomerCartController {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("Product has been removed from cart successfully")
+                .path(request.getRequestURI())
                 .build());
     }
 
     @PutMapping("/customers/cart/select/{id}")
     public ResponseEntity<?> selectCartItem(@PathVariable("id") Long cartItemId,
                                             @RequestParam(name = "selected", defaultValue = "true") boolean selected,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         Long userId = userDetails.getId();
         logger.info("Select cart item id {} for user with id: {}", cartItemId, userId);
 
@@ -109,6 +114,7 @@ public class CustomerCartController {
                 .status(HttpStatus.OK.value())
                 .message("Cart item has been selected successfully")
                 .data(isSelected)
+                .path(request.getRequestURI())
                 .build());
     }
 }

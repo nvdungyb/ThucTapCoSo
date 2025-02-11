@@ -1,7 +1,6 @@
 package com.shopme.controller.seller;
 
 import com.shopme.advice.exception.EmailAlreadyExistsException;
-import com.shopme.advice.exception.RoleNotFoundException;
 import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.entity.Seller;
 import com.shopme.dto.request.SellerRegisterDto;
@@ -9,6 +8,7 @@ import com.shopme.dto.response.SellerResponseDto;
 import com.shopme.mapper.BookMapper;
 import com.shopme.service.ProductService;
 import com.shopme.service.SellerService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class SellerController {
     }
 
     @PostMapping("/seller/register")
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SellerRegisterDto registerDto) throws EmailAlreadyExistsException, RoleNotFoundException {
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody SellerRegisterDto registerDto, HttpServletRequest request) throws EmailAlreadyExistsException {
         logger.info("DTO: {}", registerDto);
 
         Seller seller = sellerService.register(registerDto);
@@ -44,7 +44,7 @@ public class SellerController {
                 .status(HttpStatus.OK.value())
                 .message("New Seller account has been created successfully")
                 .data(SellerResponseDto.build(seller))
-                .path("/seller/register")
+                .path(request.getRequestURI())
                 .build()
         );
     }

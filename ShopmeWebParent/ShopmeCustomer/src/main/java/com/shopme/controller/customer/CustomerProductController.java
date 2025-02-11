@@ -4,6 +4,7 @@ import com.shopme.common.dto.ApiResponse;
 import com.shopme.common.shop.Category;
 import com.shopme.common.shop.Product;
 import com.shopme.dto.request.CategoryDto;
+import com.shopme.dto.response.CategoryResponseDto;
 import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.CategoryMapper;
 import com.shopme.mapper.ProductMapper;
@@ -39,7 +40,7 @@ public class CustomerProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<?> getDetailProductForUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getDetailProductForUser(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("Get detail product for user with id: " + id);
 
         Product product = productService.getDetailProductForCustomer(id);
@@ -49,16 +50,16 @@ public class CustomerProductController {
                 .status(HttpStatus.OK.value())
                 .message("Get detail product for user successfully")
                 .data(productMapper.toProductResponseDto(product))
-                .path("/products/{id}")
+                .path(request.getRequestURI())
                 .build());
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<?> getCategories() {
+    public ResponseEntity<?> getCategories(HttpServletRequest request) {
         logger.info("Get all categories");
 
         List<Category> categories = categoryService.getAllCategories();
-        List<CategoryDto> responseCategories = categories.stream()
+        List<CategoryResponseDto> responseCategories = categories.stream()
                 .map(categoryMapper::toDto)
                 .toList();
 
@@ -67,16 +68,16 @@ public class CustomerProductController {
                 .status(HttpStatus.OK.value())
                 .message("Get all categories successfully")
                 .data(responseCategories)
-                .path("/categories")
+                .path(request.getRequestURI())
                 .build());
     }
 
     @GetMapping("/categories/{id}/subcategories")
-    public ResponseEntity<?> getAllSubCategories(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getAllSubCategories(@PathVariable("id") Long id, HttpServletRequest request) {
         logger.info("Get all sub categories with parent id: " + id);
 
         List<Category> categories = categoryService.getAllSubCategories(id);
-        List<CategoryDto> responseCategories = categories.stream()
+        List<CategoryResponseDto> responseCategories = categories.stream()
                 .map(categoryMapper::toDto)
                 .toList();
 
@@ -85,7 +86,7 @@ public class CustomerProductController {
                 .status(HttpStatus.OK.value())
                 .message("Get all sub categories successfully")
                 .data(responseCategories)
-                .path("/categories/" + id + "/subcategories")
+                .path(request.getRequestURI())
                 .build());
     }
 
