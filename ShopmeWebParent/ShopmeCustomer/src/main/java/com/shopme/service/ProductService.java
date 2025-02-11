@@ -9,6 +9,7 @@ import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.dto.request.BookUpdateDto;
 import com.shopme.dto.request.LaptopCreateDto;
+import com.shopme.dto.request.LaptopUpdateDto;
 import com.shopme.mapper.BookMapper;
 import com.shopme.mapper.LaptopMapper;
 import jakarta.validation.Valid;
@@ -170,6 +171,26 @@ public class ProductService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied"));
 
         Laptop laptop = laptopMapper.toEntity(laptopCreateDto, category, seller);
+        return laptopReposistory.save(laptop);
+    }
+
+    public Laptop updateLaptop(@Valid LaptopUpdateDto laptopUpdateDto, Long userId) {
+        Laptop laptop = laptopReposistory.findById(laptopUpdateDto.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Laptop not found"));
+
+        if (!laptop.getSeller().getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        Category category;
+        if (laptopUpdateDto.getCategoryId() != null && laptop.getCategory().getId() != laptopUpdateDto.getCategoryId()) {
+            category = categoryReposistory.findById(laptopUpdateDto.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        } else {
+            category = laptop.getCategory();
+        }
+
+        laptopMapper.updateFromDto(laptopUpdateDto, laptop, category);
         return laptopReposistory.save(laptop);
     }
 }

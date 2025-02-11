@@ -7,6 +7,7 @@ import com.shopme.common.shop.Product;
 import com.shopme.dto.request.BookCreateDto;
 import com.shopme.dto.request.BookUpdateDto;
 import com.shopme.dto.request.LaptopCreateDto;
+import com.shopme.dto.request.LaptopUpdateDto;
 import com.shopme.dto.response.ProductResponseDto;
 import com.shopme.mapper.ProductMapper;
 import com.shopme.security.UserDetailsImpl;
@@ -84,6 +85,23 @@ public class SellerProductController {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .status(HttpStatus.OK.value())
                 .message("New Laptop has been created successfully")
+                .data(productMapper.toProductResponseDto(laptop))
+                .path(request.getRequestURI())
+                .build()
+        );
+    }
+
+    @PutMapping("/seller/products/laptop/update")
+    public ResponseEntity<?> updateLaptop(@Valid @RequestBody LaptopUpdateDto laptopUpdateDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        Long userId = userDetails.getId();
+
+        logger.info("DTO: {}", laptopUpdateDto);
+        Laptop laptop = productService.updateLaptop(laptopUpdateDto, userId);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .status(HttpStatus.OK.value())
+                .message("Laptop has been updated successfully")
                 .data(productMapper.toProductResponseDto(laptop))
                 .path(request.getRequestURI())
                 .build()
