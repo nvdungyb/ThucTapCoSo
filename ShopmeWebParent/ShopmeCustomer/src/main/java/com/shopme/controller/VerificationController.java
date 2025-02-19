@@ -1,4 +1,4 @@
-package com.shopme.Controller;
+package com.shopme.controller;
 
 import com.shopme.advice.exception.FailedToUpdatePasswordException;
 import com.shopme.advice.exception.RedisFailureException;

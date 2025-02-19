@@ -1,16 +1,15 @@
 package com.shopme.dto.request;
 
 import com.shopme.common.enums.ECurrency;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.Date;
 
-import jakarta.validation.constraints.*;
-
 @Data
-public class BookCreateDto {
-    @NotBlank(message = "Book name is required")
-    @Size(max = 256, message = "Book name must be at most 255 characters")
+public class LaptopCreateDto {
+    @NotBlank(message = "Laptop name is required")
+    @Size(max = 256, message = "Laptop name must be at most 255 characters")
     private String name;
 
     @Size(max = 256, message = "Alias must be at most 255 characters")
@@ -53,27 +52,41 @@ public class BookCreateDto {
     @Size(max = 255, message = "Main image must be at most 255 characters")
     private String mainImage;
 
-    @NotBlank(message = "Author is required")
-    @Size(max = 256, message = "Author name must be at most 256 characters")
-    private String author;
+    @NotNull(message = "Processor is required")
+    private String processor;
 
-    @NotBlank(message = "Publisher is required")
-    @Size(max = 255, message = "Publisher name must be at most 255 characters")
-    private String publisher;
+    @NotNull(message = "Processor speed is required")
+    private double processorSpeed;
 
-    @NotBlank(message = "ISBN is required")
-    @Pattern(regexp = "\\d{10}", message = "ISBN must be 10")
-    private String isbn;
+    @NotNull(message = "RAM is required")
+    private int ram;
 
-    @NotNull(message = "Publication date is required")
-    @PastOrPresent(message = "Publication date cannot be in the future")
-    private Date publicationDate;
+    @NotNull(message = "RAM type is required")
+    private String ramType;
 
-    private String format;
+    @NotNull(message = "Storage capacity is required")
+    private Integer storageCapacity;
 
-    @NotNull(message = "Page count is required")
-    @Min(value = 1, message = "Page count must be at least 1")
-    private Integer pageCount;
+    @NotNull(message = "Storage type is required")
+    private String storageType;
+
+    @NotNull(message = "Screen size is required")
+    private double screenSize;
+
+    @NotNull(message = "Resolution is required")
+    private String resolution;
+
+    @NotNull(message = "Refresh rate is required")
+    private Integer refeshRate;
+
+    @NotNull(message = "CPU is required")
+    private String cpu;
+
+    @NotNull(message = "Battery capacity is required")
+    private Integer batteryCapacity;
+
+    @NotNull(message = "OS is required")
+    private String os;
 
     @NotNull(message = "Category ID is required")
     @Min(value = 1, message = "Invalid category ID")
@@ -83,11 +96,10 @@ public class BookCreateDto {
     @Min(value = 1, message = "Invalid seller ID")
     private Long sellerId;
 
-    public BookCreateDto() {
+    public LaptopCreateDto() {
         this.createdTime = new Date();
         this.updatedTime = new Date();
         this.enabled = false;
         this.rating = 0;
-        this.publicationDate = new Date();
     }
 }
