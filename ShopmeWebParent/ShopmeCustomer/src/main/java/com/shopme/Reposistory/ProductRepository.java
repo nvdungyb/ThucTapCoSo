@@ -1,9 +1,11 @@
 package com.shopme.Reposistory;
 
 import com.shopme.common.entity.Seller;
+import com.shopme.common.shop.CartItem;
 import com.shopme.common.shop.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -54,5 +56,11 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
 
     @Query("SELECT p FROM Product p JOIN p.seller s WHERE s.user.id = ?1")
     List<Product> findProductsBySellerUserId(Long userId);
+
+    int findStockQuantitById(Long id);
+
+    @Modifying
+    @Query("UPDATE Product p SET p.stockQuantity = p.stockQuantity - ?2 WHERE p.id = ?1 and p.stockQuantity >= ?2")
+    void updateQuantity(Long id, int quantity);
 }
 //    OR p.category.parent.name LIKE %?2%"
